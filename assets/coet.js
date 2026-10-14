@@ -666,7 +666,10 @@
   if (rail) {
     var prev = $('[data-rail-prev]'), next = $('[data-rail-next]');
     var stepW = function () { var c = rail.children[0]; return c ? c.getBoundingClientRect().width + parseFloat(getComputedStyle(rail).columnGap || 16) : 300; };
-    var move = function (d) { rail.scrollBy({ left: d * stepW(), behavior: reduce ? 'auto' : 'smooth' }); sound('spin', .3); };
+    var move = function (d) {
+      rail.scrollBy({ left: d * stepW(), behavior: reduce ? 'auto' : 'smooth' }); sound('spin', .3);
+      dispatchEvent(new CustomEvent('coet:spin', { detail: d }));   // the arrows spin the team globe too (globe.js)
+    };
     function edges() { prev.disabled = rail.scrollLeft < 4; next.disabled = rail.scrollLeft > rail.scrollWidth - rail.clientWidth - 4; }
     prev.addEventListener('click', function () { move(-1); });
     next.addEventListener('click', function () { move(1); });

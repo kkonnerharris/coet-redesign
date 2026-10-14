@@ -115,7 +115,19 @@
   }
   function ease(k) { return k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; }
 
-  var visible = false, last = 0, turn = null;
+  var visible = false, last = 0, turn = null, spin = 0, holdUntil = 0;
+  function nearest() {   // the studio closest to the front of the globe becomes the labelled one
+    var best = active, bz = -2;
+    Object.keys(STUDIOS).forEach(function (n) { var z = rot(vec(STUDIOS[n].lat, STUDIOS[n].lng))[2]; if (z > bz) { bz = z; best = n; } });
+    if (best !== active) setStudio(best);
+  }
+  // user: "the arrow keys should also spin the globe" (the team rail's arrows send coet:spin from coet.js)
+  addEventListener('coet:spin', function (e) {
+    var d = e.detail > 0 ? 1 : -1;
+    turn = null; holdUntil = performance.now() + 12000; swapAt = performance.now();
+    if (reduce) { view.lng += d * 30; nearest(); draw(0); return; }
+    spin = Math.max(-6, Math.min(6, spin + d * 2.4));   // each press adds ~35° of travel; presses stack
+  });
   function frame(now) {
     if (!visible) return;
     requestAnimationFrame(frame);
@@ -125,9 +137,13 @@
       var k = Math.min(1, (now - turn.t0) / 2600), e = ease(k), dl = ((turn.to.lng - turn.from.lng + 540) % 360) - 180;
       view.lng = turn.from.lng + dl * e; view.lat = turn.from.lat + (turn.to.lat - turn.from.lat) * e;
       if (k >= 1) { turn = null; swapAt = now; }
+    } else if (spin) {   // the team arrows spun it: momentum that eases out, the label follows whichever studio faces us
+      view.lng += spin; spin *= .93;
+      if (Math.abs(spin) < .03) spin = 0;
+      nearest();
     } else {
       view.lng += .012;   // a breath of drift
-      if (now - swapAt > 9000) {
+      if (now - swapAt > 9000 && now > holdUntil) {
         var next = ORDER[(ORDER.indexOf(active) + 1) % ORDER.length];
         turn = { t0: now, from: { lng: view.lng, lat: view.lat }, to: { lng: STUDIOS[next].lng, lat: STUDIOS[next].lat * .6 } };
         setStudio(next);

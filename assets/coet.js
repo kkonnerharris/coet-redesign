@@ -43,13 +43,15 @@
   });
 
   /* ------------------------------------------------------------- sound --
-     User 2026-10-13: "make the sound match the theme of the site". The site is hardware lit by two gels
-     in a deep starfield, so the sound is a quiet synth instrument panel in space, all synthesised here:
-       - a low space drone that opens up as you scroll (it replaces the air);
-       - sonar pings on the scroll, low pentatonic, echoing in a soft space delay;
-       - a light-sweep whoosh, left to right, each time the landing reel reveals the next piece of hardware;
-       - HMI blips for the interface (menu, toggles, rail, form) instead of the old click files;
-       - water by Tap Water, through the same space.
+     History: a synth instrument panel (10-13), then deep space (10-14), then noise-only "spacey" (10-14).
+     User 2026-10-14: "it should sound like an Apple commercial, or like you're scrolling through an Apple page".
+     So it is clean and quiet now, all synthesised here, nothing pitched you would hum:
+       - silence at rest, apart from the faintest room air;
+       - a soft, smooth rush of air that follows your scroll speed, and a gentle swoosh as each section arrives;
+       - the reel's reveals land with a swoosh and a deep, soft bloom underneath, like a product film;
+       - the interface answers with crisp tactile ticks (a phone's haptic click) and a soft pop to confirm;
+       - water by Tap Water, kept.
+     A short, clean room (1.4 s) instead of the long space reverb, and a gentle limiter so nothing ever spikes.
      The original's rules still hold: on by default, remembered when off, silent until the first tap,
      off under reduced motion. */
   var soundOn = store.get('coet-sound') !== 'off' && !reduce;
@@ -58,34 +60,55 @@
     if (armed || reduce) return; armed = true;
     var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
     actx = new AC();
-    master = actx.createBiquadFilter(); master.type = 'lowpass'; master.frequency.value = 1500; master.Q.value = .3;
-    var mg = actx.createGain(); mg.gain.value = .8; master.connect(mg).connect(actx.destination);
-    // the space: two filtered echoes, one left and one right, feeding back softly
+    master = actx.createBiquadFilter(); master.type = 'lowpass'; master.frequency.value = 9000; master.Q.value = .3;
+    var lim = actx.createDynamicsCompressor(); lim.threshold.value = -18; lim.knee.value = 12; lim.ratio.value = 6; lim.attack.value = .003; lim.release.value = .25;
+    var mg = actx.createGain(); mg.gain.value = .9; master.connect(lim).connect(mg).connect(actx.destination);
+    // the room: a short, airy, slightly bright reverb made from decaying stereo noise
     space = actx.createGain(); space.gain.value = 1;
-    [[.38, -.6], [.57, .6]].forEach(function (d) {
-      var dl = actx.createDelay(1), fb = actx.createGain(), lp = actx.createBiquadFilter(), pan = actx.createStereoPanner ? actx.createStereoPanner() : actx.createGain();
-      dl.delayTime.value = d[0]; fb.gain.value = .36; lp.type = 'lowpass'; lp.frequency.value = 1100;
-      if (pan.pan) pan.pan.value = d[1];
-      space.connect(dl); dl.connect(lp); lp.connect(fb); fb.connect(dl); lp.connect(pan); pan.connect(master);
-    });
+    var len = Math.round(actx.sampleRate * 1.4), ir = actx.createBuffer(2, len, actx.sampleRate);
+    for (var c = 0; c < 2; c++) {
+      var d = ir.getChannelData(c), lp = 0;
+      for (var i = 0; i < len; i++) { var k = i / len; lp += (Math.random() * 2 - 1 - lp) * (.85 - .6 * k); d[i] = lp * Math.pow(1 - k, 3.2); }
+    }
+    var verb = actx.createConvolver(), vg = actx.createGain(); verb.buffer = ir; vg.gain.value = .9;
+    space.connect(verb).connect(vg).connect(master);
   }
   ['pointerdown', 'keydown', 'touchstart'].forEach(function (e) { addEventListener(e, arm, { once: true, passive: true }); });
-  function out(node, send) {   // dry to the master, a share into the space
+  function out(node, send) {   // dry to the master, a share into the room
     node.connect(master);
     if (send) { var s = actx.createGain(); s.gain.value = send; node.connect(s); s.connect(space); }
   }
-  function tone(type, f, t, len, gain, send, glide) {   // one soft synth note with a filter that closes as it fades
-    var o = actx.createOscillator(), lp = actx.createBiquadFilter(), g = actx.createGain();
-    o.type = type; o.frequency.setValueAtTime(f, t); if (glide) o.frequency.exponentialRampToValueAtTime(f * glide, t + len * .6);
-    lp.type = 'lowpass'; lp.Q.value = 1; lp.frequency.setValueAtTime(f * 6, t); lp.frequency.exponentialRampToValueAtTime(f * 1.2, t + len);
-    g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + .015); g.gain.exponentialRampToValueAtTime(.0001, t + len);
-    o.connect(lp).connect(g); out(g, send); o.start(t); o.stop(t + len + .05);
+  function swoosh(t, len, f0, f1, gain, send, pan0, pan1) {   // smooth air: soft noise through a wide band that glides, eased in and out
+    var s = actx.createBufferSource(), bp = actx.createBiquadFilter(), g = actx.createGain(), node = g;
+    s.buffer = noise(); bp.type = 'bandpass'; bp.Q.value = .7;
+    bp.frequency.setValueAtTime(f0, t); bp.frequency.exponentialRampToValueAtTime(f1, t + len);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(gain, t + len * .45); g.gain.linearRampToValueAtTime(0, t + len);
+    s.connect(bp).connect(g);
+    if (pan0 != null && actx.createStereoPanner) { var p = actx.createStereoPanner(); p.pan.setValueAtTime(pan0, t); p.pan.linearRampToValueAtTime(pan1, t + len); g.connect(p); node = p; }
+    out(node, send); s.start(t, Math.random()); s.stop(t + len + .05);
+  }
+  function tick(t, gain, f) {   // a haptic click: a few milliseconds of bright noise and a tiny body
+    var s = actx.createBufferSource(), hp = actx.createBiquadFilter(), g = actx.createGain();
+    s.buffer = white(); hp.type = 'bandpass'; hp.frequency.value = f || 3800; hp.Q.value = 1.2;
+    g.gain.setValueAtTime(gain, t); g.gain.exponentialRampToValueAtTime(.0001, t + .018);
+    s.connect(hp).connect(g); out(g, .08); s.start(t, Math.random()); s.stop(t + .03);
+    var o = actx.createOscillator(), og = actx.createGain();
+    o.type = 'sine'; o.frequency.setValueAtTime(180, t); o.frequency.exponentialRampToValueAtTime(90, t + .03);
+    og.gain.setValueAtTime(gain * .6, t); og.gain.exponentialRampToValueAtTime(.0001, t + .04);
+    o.connect(og); out(og, 0); o.start(t); o.stop(t + .05);
+  }
+  function bloom(t, gain, len) {   // the deep, soft swell under a reveal: a sub that rises in, felt more than heard
+    var o = actx.createOscillator(), g = actx.createGain(), lp = actx.createBiquadFilter();
+    o.type = 'sine'; o.frequency.setValueAtTime(42, t); o.frequency.exponentialRampToValueAtTime(58, t + len * .5);
+    lp.type = 'lowpass'; lp.frequency.value = 140;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(gain, t + len * .35); g.gain.exponentialRampToValueAtTime(.0001, t + len);
+    o.connect(lp).connect(g); out(g, .15); o.start(t); o.stop(t + len + .05);
   }
   // interface cues keep their old names, so every caller still works
   var CUES = {
-    spin: function (t, k) { tone('triangle', 220, t, .22, .05 * k, .25); },                                          // a toggle or a step: one blip
-    enter: function (t, k) { tone('triangle', 196, t, .25, .045 * k, .3); tone('triangle', 293.66, t + .09, .35, .045 * k, .35); },   // a confirm: up a fifth
-    frame: function (t, k) { tone('sine', 146.83, t, .6, .06 * k, .45, 1.5); tone('triangle', 220, t + .12, .5, .03 * k, .45); }   // a panel opens
+    spin: function (t, k) { tick(t, .05 * k); },                                                             // a step or toggle: one tactile tick
+    enter: function (t, k) { tick(t, .045 * k, 2600); swoosh(t, .35, 900, 2600, .03 * k, .25); },            // a confirm: a tick and a little lift of air
+    frame: function (t, k) { swoosh(t, .7, 500, 2400, .045 * k, .3, -.3, .3); bloom(t, .035 * k, 1.1); }     // a panel opens: air and a soft bloom
   };
   function sound(name, gain) {
     if (!soundOn || !actx || !CUES[name]) return;
@@ -103,63 +126,62 @@
     });
   });
 
-  var drone = null, water = null, noiseBuf = null, waterLevel = 0, vel = 0;
+  var drone = null, water = null, flight = null, noiseBuf = null, whiteBuf = null, waterLevel = 0, vel = 0, BED = .006;
   function paintSound() {   // browsers stay silent until a tap, so until then the button offers to play
     $$('[data-sound-toggle]').forEach(function (o) {
       o.setAttribute('aria-pressed', String(soundOn && !!drone));
       o.querySelector('span').textContent = !soundOn ? 'Sound off' : drone ? 'Sound on' : 'Play sound';
     });
   }
-  function noise() {
+  function noise() {   // soft, dark noise for air
     if (noiseBuf) return noiseBuf;
     noiseBuf = actx.createBuffer(1, actx.sampleRate * 2, actx.sampleRate);
     var d = noiseBuf.getChannelData(0), last = 0;
     for (var i = 0; i < d.length; i++) { var w = Math.random() * 2 - 1; last = (last + .02 * w) / 1.02; d[i] = last * 3.5 + w * .15; }   // brown-ish
     return noiseBuf;
   }
+  function white() {   // bright noise, only for the ticks
+    if (whiteBuf) return whiteBuf;
+    whiteBuf = actx.createBuffer(1, actx.sampleRate * .5, actx.sampleRate);
+    var d = whiteBuf.getChannelData(0);
+    for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    return whiteBuf;
+  }
+  function loopBand(f, q, into) {   // a looped noise band, for the continuous layers
+    var src = actx.createBufferSource(), fl = actx.createBiquadFilter(), g = actx.createGain();
+    src.buffer = noise(); src.loop = true; fl.type = 'bandpass'; fl.frequency.value = f; fl.Q.value = q; g.gain.value = 0;
+    src.connect(fl).connect(g); out(g, into); src.start(0, Math.random() * 2);
+    return { g: g, f: fl };
+  }
   function bed() {   // the continuous layers exist only once audio is armed and sound is on
     if (!actx) return;
     if (drone) {
-      drone.g.gain.setTargetAtTime(soundOn ? .014 : 0, actx.currentTime, .3);
-      if (!soundOn) water.g.gain.setTargetAtTime(0, actx.currentTime, .1);
+      drone.g.gain.setTargetAtTime(soundOn ? BED : 0, actx.currentTime, .3);
+      if (!soundOn) { water.g.gain.setTargetAtTime(0, actx.currentTime, .1); flight.g.gain.setTargetAtTime(0, actx.currentTime, .1); }
       return;
     }
     if (!soundOn) return;
-    // the drone: A and E in the bass, two detuned saws an octave up, all under one slow filter
-    var lp = actx.createBiquadFilter(), g = actx.createGain(), lfo = actx.createOscillator(), lfoG = actx.createGain();
-    lp.type = 'lowpass'; lp.frequency.value = 240; lp.Q.value = 2.5; g.gain.value = 0;
-    [['sine', 55, 0, .9], ['triangle', 82.41, 0, .45], ['sawtooth', 110, -7, .12], ['sawtooth', 110, 7, .12]].forEach(function (v) {
-      var o = actx.createOscillator(), og = actx.createGain(); o.type = v[0]; o.frequency.value = v[1]; o.detune.value = v[2]; og.gain.value = v[3];
-      o.connect(og).connect(lp); o.start();
-    });
-    lfo.frequency.value = .06; lfoG.gain.value = 70; lfo.connect(lfoG).connect(lp.frequency); lfo.start();   // it breathes, very slowly
-    lp.connect(g); out(g, .35);
-    g.gain.setTargetAtTime(.014, actx.currentTime, 1.5);
-    drone = { g: g, f: lp };
+    drone = loopBand(700, .5, .2);   // room air: barely there, so the page never feels dead
+    drone.g.gain.setTargetAtTime(BED, actx.currentTime, 2);
+    flight = loopBand(600, .6, .35);   // the scroll: a smooth rush that rises and brightens with speed
     // the water: a dark trickle, silent until Tap Water is on screen
     var ws = actx.createBufferSource(), wf = actx.createBiquadFilter(), wg = actx.createGain();
     ws.buffer = noise(); ws.loop = true; wf.type = 'lowpass'; wf.frequency.value = 420; wf.Q.value = .8; wg.gain.value = 0;
     ws.connect(wf).connect(wg); out(wg, .2); ws.start();
     water = { g: wg, f: wf };
   }
-  var NOTES = [110, 130.81, 146.83, 164.81, 196, 220];   // A minor pentatonic, low (user: "lower tone")
-  function ping(gain) {   // a sonar ping that rings out into the space
-    if (!soundOn || !actx) return;
-    tone('triangle', NOTES[Math.floor(Math.random() * NOTES.length)], actx.currentTime, 1.1, gain, .55);
-  }
-  var sweepCount = 0;
-  function sweep() {   // the light sweep in the reel, heard: a breath of filtered noise travelling left to right
+  var sweepCount = 0, lastArrive = 0;
+  function sweep() {   // each reveal in the reel: a swoosh across the stereo field and a soft bloom underneath
     if (!soundOn || !actx) return;
     sweepCount++;
-    var t = actx.currentTime, s = actx.createBufferSource(), bp = actx.createBiquadFilter(), g = actx.createGain(),
-        pan = actx.createStereoPanner ? actx.createStereoPanner() : null;
-    s.buffer = noise(); bp.type = 'bandpass'; bp.Q.value = 2.2;
-    bp.frequency.setValueAtTime(260, t); bp.frequency.exponentialRampToValueAtTime(1300, t + .9); bp.frequency.exponentialRampToValueAtTime(300, t + 1.9);
-    g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.05, t + .7); g.gain.exponentialRampToValueAtTime(.0001, t + 2);
-    if (pan) { pan.pan.setValueAtTime(-.7, t); pan.pan.linearRampToValueAtTime(.7, t + 1.9); s.connect(bp).connect(g).connect(pan); out(pan, .4); }
-    else { s.connect(bp).connect(g); out(g, .4); }
-    s.start(t, Math.random()); s.stop(t + 2.1);
-    if (drone) { drone.f.frequency.setTargetAtTime(520, t, .25); drone.f.frequency.setTargetAtTime(240, t + .9, .8); }   // the drone glows with the light
+    var t = actx.currentTime;
+    swoosh(t, 1.3, 350, 3200, .035, .35, -.6, .6);
+    bloom(t + .15, .045, 1.6);
+  }
+  function arrive() {   // a section slides into view: a gentle swoosh, never more than one a second
+    if (!soundOn || !actx || !drone) return;
+    var now = performance.now(); if (now - lastArrive < 1000) return; lastArrive = now;
+    swoosh(actx.currentTime, .8, 400, 1800, .022, .3);
   }
   function drop(gain, lo) {   // a water drop: a sine that chirps upward as the bubble closes
     var t = actx.currentTime, o = actx.createOscillator(), g = actx.createGain(), f = lo + Math.random() * lo;
@@ -169,20 +191,26 @@
   }
   if (!reduce) {
     ['click', 'keydown', 'touchend'].forEach(function (e) { addEventListener(e, function () { setTimeout(function () { bed(); paintSound(); }, 50); }, { once: true, passive: true }); });
-    var lastY = scrollY, lastT = performance.now(), run = 0, waterEls = $$('[data-water]');
+    var lastY = scrollY, lastT = performance.now(), waterEls = $$('[data-water]');
     var reel = document.querySelector('.hero-reel video'), SEG = 2.7, lastSeg = -1;   // compose_studio.sh: 3.4 s shots, 0.7 s dissolves
     addEventListener('scroll', function () {
       var now = performance.now(), dy = Math.abs(scrollY - lastY), dt = Math.max(16, now - lastT);
       lastY = scrollY; lastT = now; vel = Math.min(1, dy / dt / 4);   // ~4 px/ms is a hard fling
-      run += dy;
-      if (run > 460) { run = 0; ping(.026 + vel * .02); }
     }, { passive: true });
+    if ('IntersectionObserver' in window) {   // each section announces itself once as it scrolls in
+      var seen = new WeakSet();
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting && !seen.has(e.target)) { seen.add(e.target); arrive(); } });
+      }, { threshold: .25 });
+      $$('main > section, main > .section').forEach(function (s) { io.observe(s); });
+    }
     (function loop() {
       requestAnimationFrame(loop);
       if (!drone || !soundOn) return;
-      var t = actx.currentTime;
-      drone.g.gain.setTargetAtTime(.014 + vel * .03, t, .5);   // the drone swells a little while you move
-      vel *= .94;
+      var t = actx.currentTime, v = vel * vel;   // squared, so a gentle scroll is a whisper and a fling is a rush
+      flight.g.gain.setTargetAtTime(v * .07, t, .15);
+      flight.f.frequency.setTargetAtTime(500 + v * 2200, t, .2);
+      vel *= .92;
       waterLevel = 0;
       waterEls.forEach(function (el) {   // how much of the Tap Water plate is on screen
         var r = el.getBoundingClientRect(), vis = Math.max(0, Math.min(r.bottom, innerHeight) - Math.max(r.top, 0)) / Math.max(1, Math.min(r.height, innerHeight));

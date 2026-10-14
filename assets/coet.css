@@ -1212,3 +1212,64 @@ body { background: transparent; }
 @media (max-width: 859px) {
   .bg-sky { background-image: linear-gradient(180deg, rgb(0 0 0 / .38), rgb(0 0 0 / .22) 55%, rgb(0 0 0 / .45)), url(/coet-redesign/assets/img/sky3-m.webp); background-position: center; }
 }
+
+/* ===================================================== QUIET PALETTE ======
+   User 2026-10-14: "there is too much color in the site, it should be subtle and professional".
+   Near-monochrome: white and silver type, a desaturated sky, one cool steel accent used sparingly,
+   and glows cut to a faint edge light. COET's own drawings and the films keep their colours.
+   The magenta/cyan rules above stay in place; this block overrides them so the step is easy to undo. */
+:root {
+  --gel-a: #c9d2dc;   /* silver */
+  --gel-b: #8fa6bd;   /* steel */
+  --quiet: 160 178 198;   /* the one accent, as a triplet for soft light */
+  --accent: #e8ecf0; --accent-text: #c9d2dc; --accent-ink: #000; --cyan: var(--gel-b); --star-warm: #c9d2dc;
+}
+/* the sky: same photo, colour pulled almost all the way out and dimmed so it reads as texture */
+.bg-sky { filter: saturate(.5) brightness(.68) contrast(1.05); }   /* user: "the background image should maintain a little color" */
+/* the drifting coloured washes go */
+body::before, body::after { opacity: 0 !important; animation: none !important; }
+/* headline emphasis: white to silver, no rainbow */
+.beat--line .grad, .grad, .close--studio h2 span {
+  background: linear-gradient(180deg, #ffffff 0%, #b9c0c8 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+/* small accents */
+.label::before, .chapter__eyebrow::before, .pill::before { background: var(--gel-b); box-shadow: none; }
+.marquee i { color: var(--gel-b); }
+.nav__progress, .brief__progress span { background: #d6dce3; }
+.filters button[aria-pressed="true"] { background: #f2f4f6; color: #000; border-color: transparent; }
+:focus-visible, .tile-x:focus-visible { outline-color: #d6dce3; }
+.faq details[open] { border-color: rgb(255 255 255 / .22); }
+.hero-reel__sound:hover { border-color: rgb(255 255 255 / .4); }
+.close--studio .close__inner::before { opacity: .12; background: radial-gradient(50% 50% at 50% 50%, rgb(var(--quiet)), transparent 70%); }
+.reel__frame--film { box-shadow: 0 40px 120px -50px rgb(0 0 0 / .9); }
+/* team portraits, project plates, service tiles: one neutral edge light, no colour wash */
+.person__pic, .person:nth-child(even) .person__pic,
+.work__media, .work:nth-child(even) .work__media, .card:nth-child(even) .work__media,
+.tile-x, .tile-x:nth-child(even) { --gel: var(--quiet); }
+.person__pic { border-color: rgb(255 255 255 / .14); box-shadow: 0 24px 60px -30px rgb(0 0 0 / .9), 0 0 80px -50px rgb(var(--gel) / .35); }
+.person__pic::after { opacity: 0 !important; }
+.work__media { border-color: rgb(255 255 255 / .14) !important; box-shadow: 0 30px 80px -40px rgb(0 0 0 / .9), 0 0 100px -60px rgb(var(--gel) / .35) !important; }
+@media (hover: hover) and (pointer: fine) {
+  .person:hover .person__pic, .person:focus-within .person__pic { border-color: rgb(255 255 255 / .3);
+    box-shadow: 0 28px 70px -28px rgb(0 0 0 / .9), 0 0 100px -45px rgb(var(--gel) / .5); }
+}
+.work:hover .work__media, .card:hover .work__media { border-color: rgb(255 255 255 / .3) !important;
+  box-shadow: 0 36px 90px -36px rgb(0 0 0 / .9), 0 0 120px -50px rgb(var(--gel) / .5) !important; }
+.tile-x, .tile-x:hover, .tile-x.is-on, .tile-x:focus-visible {
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .08), inset 0 -80px 110px -80px rgb(var(--gel) / .22); }
+.tile-x h3 { text-shadow: none; }
+/* the studio films and project stills were shot under magenta and cyan gels: keep the light, lose most of the colour */
+.hero-reel__video, .work__media img, .work__media video, .reel__frame video, .reel__frame img { filter: saturate(.4) brightness(.95); }
+/* the last of the old amber: the button's running edge light, copy slots, form choices, cursor, quote marks */
+.btn--beam::after, [data-beam]::after { background: conic-gradient(from var(--beam), transparent 0 78%, rgb(200 212 225 / .7) 88%, #fff 92%, transparent 96%); }
+.slot { background: rgb(255 255 255 / .07); }
+.pill::before { box-shadow: none; animation: none; }
+.cursor.is-hot .cursor__ring { border-color: rgb(255 255 255 / .6); background: rgb(255 255 255 / .06); }
+.choice:has(input:checked) { border-color: rgb(255 255 255 / .5); background: rgb(255 255 255 / .05); box-shadow: 0 0 0 1px rgb(255 255 255 / .2); }
+.more a:hover { border-color: rgb(255 255 255 / .3); box-shadow: 0 20px 40px -20px rgb(0 0 0 / .8); }
+.voice__photo::after { opacity: 0; }
+.voice blockquote::before { color: #c9d2dc; text-shadow: none; }
+.close__inner::before { background: radial-gradient(50% 50% at 50% 55%, rgb(var(--quiet) / .1), transparent 70%); }
+/* the one place colour stays (user: "this should still be colored: intuitive product experiences"):
+   the hero line keeps its original magenta-to-cyan gradient */
+.hero-reel__copy h1 .grad, .hero-reel__copy h1 .grad .gw {
+  background: linear-gradient(95deg, #ff3d9a 0%, #c77dff 50%, #2de2ff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }

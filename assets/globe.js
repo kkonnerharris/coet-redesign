@@ -3,6 +3,7 @@
    Scottsdale, joined by a trunk arc, and arcs from each studio to the cities they work with. This redraws that
    exact data for the dark page: coastlines in faint starlight, arcs in the two gels with light travelling along
    them, a pulsing studio marker with its coordinates, and the globe spinning steadily (the arrows steer it).
+   Quiet palette (user 2026-10-14: "too much color"): silver lines, one steel accent.
    A plain 2D canvas, no three.js. It only animates on screen. The spin runs even under reduced motion (user: "spin continuously without stopping"). */
 (function () {
   'use strict';
@@ -49,7 +50,7 @@
     g.addColorStop(0, 'rgba(24,24,40,.55)'); g.addColorStop(1, 'rgba(4,4,10,.78)');
     ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fill();
     var rim = ctx.createLinearGradient(cx - R, cy - R, cx + R, cy + R);
-    rim.addColorStop(0, 'rgba(255,61,154,.55)'); rim.addColorStop(.5, 'rgba(255,255,255,.08)'); rim.addColorStop(1, 'rgba(45,226,255,.55)');
+    rim.addColorStop(0, 'rgba(255,255,255,.28)'); rim.addColorStop(.5, 'rgba(255,255,255,.06)'); rim.addColorStop(1, 'rgba(160,178,198,.3)');
     ctx.strokeStyle = rim; ctx.lineWidth = 1.2; ctx.stroke();
     // graticule, very faint
     ctx.strokeStyle = 'rgba(255,255,255,.045)'; ctx.lineWidth = .8;
@@ -78,25 +79,25 @@
       for (var k = 0; k <= N * grow; k++) { var u = k / N; pts.push(project(slerp(A, B, u), lift * Math.sin(Math.PI * u))); }
       if (pts.length < 2) return;
       var grad = ctx.createLinearGradient(pts[0].x, pts[0].y, pts[pts.length - 1].x, pts[pts.length - 1].y);
-      grad.addColorStop(0, 'rgba(255,61,154,' + (mine ? .9 : .32) + ')'); grad.addColorStop(1, 'rgba(45,226,255,' + (mine ? .9 : .32) + ')');
+      grad.addColorStop(0, 'rgba(235,240,245,' + (mine ? .75 : .22) + ')'); grad.addColorStop(1, 'rgba(160,178,198,' + (mine ? .75 : .22) + ')');
       ctx.strokeStyle = grad; ctx.lineWidth = arc.trunk ? 1.6 : 1.1; ctx.beginPath();
       var pen = false;
       pts.forEach(function (p) { var vis = p.z > 0 || p.r2 > 1; if (vis) { pen ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); pen = true; } else pen = false; });
       ctx.stroke();
       if (!reduce && grow >= 1 && mine) {   // a bead of light along the arc
         var u = (t * .22 + arc.seed) % 1, b = project(slerp(A, B, u), lift * Math.sin(Math.PI * u));
-        if (b.z > 0 || b.r2 > 1) { ctx.fillStyle = 'rgba(255,255,255,.95)'; ctx.shadowColor = 'rgba(45,226,255,.9)'; ctx.shadowBlur = 10;
+        if (b.z > 0 || b.r2 > 1) { ctx.fillStyle = 'rgba(255,255,255,.95)'; ctx.shadowColor = 'rgba(200,215,230,.7)'; ctx.shadowBlur = 8;
           ctx.beginPath(); ctx.arc(b.x, b.y, 1.8, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0; }
       }
       var end = project(B);   // the city
-      if (end.z > 0) { ctx.fillStyle = 'rgba(45,226,255,' + (mine ? .9 : .4) + ')'; ctx.beginPath(); ctx.arc(end.x, end.y, 2, 0, Math.PI * 2); ctx.fill(); }
+      if (end.z > 0) { ctx.fillStyle = 'rgba(200,212,225,' + (mine ? .85 : .35) + ')'; ctx.beginPath(); ctx.arc(end.x, end.y, 2, 0, Math.PI * 2); ctx.fill(); }
     });
     // the studios
     Object.keys(STUDIOS).forEach(function (n) {
       var s = STUDIOS[n], p = project(vec(s.lat, s.lng)); if (p.z <= 0) return;
       var on = n === active, pulse = reduce ? 0 : (t * .8) % 1;
-      if (on) { ctx.strokeStyle = 'rgba(255,61,154,' + (1 - pulse) * .8 + ')'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(p.x, p.y, 4 + pulse * 18, 0, Math.PI * 2); ctx.stroke(); }
-      ctx.fillStyle = on ? '#ff3d9a' : 'rgba(255,61,154,.6)'; ctx.shadowColor = '#ff3d9a'; ctx.shadowBlur = on ? 14 : 6;
+      if (on) { ctx.strokeStyle = 'rgba(255,255,255,' + (1 - pulse) * .6 + ')'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(p.x, p.y, 4 + pulse * 18, 0, Math.PI * 2); ctx.stroke(); }
+      ctx.fillStyle = on ? '#ffffff' : 'rgba(255,255,255,.6)'; ctx.shadowColor = 'rgba(200,215,230,.9)'; ctx.shadowBlur = on ? 10 : 4;
       ctx.beginPath(); ctx.arc(p.x, p.y, on ? 4 : 3, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
       if (on && label) { label.style.transform = 'translate(' + Math.round(p.x - 14) + 'px,' + Math.round(p.y - 12) + 'px) translateX(-100%)'; }
     });

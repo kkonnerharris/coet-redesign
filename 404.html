@@ -69,41 +69,81 @@
 </div>
 <main id="main">
 
-  <!-- 1 THE LANDING IS THE SHOWREEL. User: "the show reel video needs to be the landing page, exactly like that".
-       The six light-sweep reveals play full screen on a loop (phones get a portrait cut), with the line over it. -->
-  <section class="hero-reel" aria-labelledby="hero-title">
-    <video class="hero-reel__video" muted loop playsinline preload="auto" poster="/coet-redesign/assets/studio/reel-poster.webp" data-reel data-src="/coet-redesign/assets/studio/reel.mp4" data-src-m="/coet-redesign/assets/studio/reel-m.mp4" data-src-a="/coet-redesign/assets/studio/reel-a.webm" data-src-m-a="/coet-redesign/assets/studio/reel-m-a.webm" data-poster-m="/coet-redesign/assets/studio/reel-m-poster.webp" aria-label="Showreel: eight pieces of hardware, from a control module to a rugged tablet and a circuit board, revealed by a sweep of magenta and cyan light"></video>
+  <!-- User 2026-10-14: "this doesn't feel like a product website setup" → chose the Apple product page layout:
+       a sticky product bar, a centred hero, the highlights, one chapter per service, the numbers, then the rest. -->
+
+  <!-- 0 THE PRODUCT BAR, sticky, like a flagship launch page's local nav -->
+  <nav class="pnav" aria-label="On this page" data-pnav>
+    <div class="pnav__inner">
+      <a class="pnav__title" href="#top">COET</a>
+      <ul class="pnav__links">
+        <li><a href="#highlights">Overview</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#work">Work</a></li>
+        <li><a href="#team">Team</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+      <a class="pnav__cta" href="/coet-redesign/start-a-project">Start a project</a>
+    </div>
+  </nav>
+
+  <!-- 1 HERO: the showreel full screen, the line centred over it -->
+  <section class="hero-reel hero-reel--product" id="top" aria-labelledby="hero-title">
+    <video class="hero-reel__video" muted loop playsinline preload="auto" poster="/coet-redesign/assets/studio/reel-poster.webp" data-reel data-src="/coet-redesign/assets/studio/reel.mp4" data-src-m="/coet-redesign/assets/studio/reel-m.mp4" data-src-a="/coet-redesign/assets/studio/reel-a.webm" data-src-m-a="/coet-redesign/assets/studio/reel-m-a.webm" data-poster-m="/coet-redesign/assets/studio/reel-m-poster.webp" aria-label="Showreel: eight pieces of hardware, from a control module to a rugged tablet and a circuit board, revealed by a sweep of light"></video>
     <div class="hero-reel__shade" aria-hidden="true"></div>
     <div class="wrap hero-reel__copy">
-      <p class="label">Hardware product studio</p>
+      <p class="hero-reel__eyebrow">Hardware product studio</p>
       <h1 id="hero-title" class="sc-display">We turn complicated hardware into <span class="grad">intuitive product experiences.</span></h1>
-      <div class="btn-row"><a class="btn btn--primary" href="/coet-redesign/start-a-project">Start a project <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn btn--ghost" href="#work">See our work</a></div>
+      <div class="btn-row"><a class="btn btn--primary" href="/coet-redesign/start-a-project">Start a project <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="pl-link" href="#work">See our work <span aria-hidden="true">›</span></a></div>
     </div>
     <button type="button" class="hero-reel__sound" data-sound-toggle aria-pressed="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M2.5 6v4h2.5l3.5 3V3L5 6z"/><path class="wave" d="M11 5.5a3.5 3.5 0 0 1 0 5M12.8 3.8a6 6 0 0 1 0 8.4"/></svg><span>Sound on</span></button>
   </section>
 
-  <!-- 2 STATEMENT -->
-  <section class="section statement-reel" data-sc-act="flow" aria-label="What we do">
+  <!-- 2 INTRO: one centred paragraph that lights up word by word -->
+  <section class="section statement-reel pintro" data-sc-act="flow" aria-label="What we do">
     <div class="wrap"><p class="sc-display" data-words-in>We take all that technical depth and turn it into something people understand and enjoy. No corporate fluff. Just the product and story you have been trying to say.</p></div>
   </section>
 
-  <!-- 3b MARQUEE + COUNTS. Every discipline COET lists, running; counts taken from the site's own data -->
-  <section class="ticker" data-sc-act="flow" aria-label="What COET does">
-    <div class="marquee" aria-hidden="true"><div class="marquee__track"><span>Logo</span><i>✦</i><span>Type</span><i>✦</i><span>Color</span><i>✦</i><span>Pitch decks</span><i>✦</i><span>Brand portal</span><i>✦</i><span>Framer</span><i>✦</i><span>SvelteKit</span><i>✦</i><span>Landing pages</span><i>✦</i><span>CMS</span><i>✦</i><span>Blender</span><i>✦</i><span>Keyshot</span><i>✦</i><span>CAD renders</span><i>✦</i><span>Launch films</span><i>✦</i><span>Machine screens</span><i>✦</i><span>Apps</span><i>✦</i><span>Sound</span><i>✦</i><span>Haptics</span><i>✦</i><span>Design system</span><i>✦</i><span>Embedded UI</span><i>✦</i><span>Frontend</span><i>✦</i><span>Integrations</span><i>✦</i><span>Prototypes</span><i>✦</i><span>Logo</span><i>✦</i><span>Type</span><i>✦</i><span>Color</span><i>✦</i><span>Pitch decks</span><i>✦</i><span>Brand portal</span><i>✦</i><span>Framer</span><i>✦</i><span>SvelteKit</span><i>✦</i><span>Landing pages</span><i>✦</i><span>CMS</span><i>✦</i><span>Blender</span><i>✦</i><span>Keyshot</span><i>✦</i><span>CAD renders</span><i>✦</i><span>Launch films</span><i>✦</i><span>Machine screens</span><i>✦</i><span>Apps</span><i>✦</i><span>Sound</span><i>✦</i><span>Haptics</span><i>✦</i><span>Design system</span><i>✦</i><span>Embedded UI</span><i>✦</i><span>Frontend</span><i>✦</i><span>Integrations</span><i>✦</i><span>Prototypes</span><i>✦</i></div></div>
-    <ul class="wrap counts">
-      <li><b data-count="12">0</b><span>People on the team</span></li>
-      <li><b data-count="5">0</b><span>Disciplines under one roof</span></li>
-      <li><b data-count="3">0</b><span>Recent projects shown</span></li>
-      <li><b data-count="3">0</b><span>Projects open this quarter</span></li>
+  <!-- 3 GET THE HIGHLIGHTS: a snapping gallery of the five services, from the Higgsfield stills -->
+  <section class="phl" id="highlights" data-sc-act="flow" aria-labelledby="phl-title">
+    <div class="wrap phl__head"><h2 id="phl-title" class="sc-display h2">Get the highlights.</h2></div>
+    <ul class="phl__rail" data-phl tabindex="0" aria-label="Highlights. Swipe or use the buttons.">
+      <li class="phl__card" id="hl-branding" aria-label="Branding">
+        <img src="/coet-redesign/assets/img/svc-branding.webp" alt="" loading="lazy" decoding="async">
+        <div class="phl__copy"><p class="phl__kicker">Branding</p><p class="phl__line">Your brand should reflect the credibility of your product, and the company you&#x27;re becoming.</p></div>
+      </li>
+      <li class="phl__card" id="hl-web" aria-label="Web">
+        <img src="/coet-redesign/assets/img/svc-web.webp" alt="" loading="lazy" decoding="async">
+        <div class="phl__copy"><p class="phl__kicker">Web</p><p class="phl__line">Your site sells the machine before the demo does. Built from scratch, never from a template.</p></div>
+      </li>
+      <li class="phl__card" id="hl-rendering" aria-label="Rendering">
+        <img src="/coet-redesign/assets/img/svc-rendering.webp" alt="" loading="lazy" decoding="async">
+        <div class="phl__copy"><p class="phl__kicker">Rendering</p><p class="phl__line">Show the machine before it ships. Built from your CAD files, true down to the last bolt.</p></div>
+      </li>
+      <li class="phl__card" id="hl-interfaces" aria-label="Interfaces">
+        <img src="/coet-redesign/assets/img/svc-interfaces.webp" alt="" loading="lazy" decoding="async">
+        <div class="phl__copy"><p class="phl__kicker">Interfaces</p><p class="phl__line">The screens, controls, and sounds people touch every day. We tune every tap, click, and buzz until the machine feels like part of you.</p></div>
+      </li>
+      <li class="phl__card" id="hl-implementation" aria-label="Implementation">
+        <img src="/coet-redesign/assets/img/svc-implementation.webp" alt="" loading="lazy" decoding="async">
+        <div class="phl__copy"><p class="phl__kicker">Implementation</p><p class="phl__line">We take the interface off the screen and put it on the machine. Production-ready software, integrated with your hardware and systems.</p></div>
+      </li>
     </ul>
+    <div class="wrap phl__ctrl">
+      <div class="phl__dots" role="tablist" aria-label="Choose a highlight"><button type="button" role="tab" aria-label="Branding" aria-selected="true" data-phl-dot="0"></button><button type="button" role="tab" aria-label="Web" aria-selected="false" data-phl-dot="1"></button><button type="button" role="tab" aria-label="Rendering" aria-selected="false" data-phl-dot="2"></button><button type="button" role="tab" aria-label="Interfaces" aria-selected="false" data-phl-dot="3"></button><button type="button" role="tab" aria-label="Implementation" aria-selected="false" data-phl-dot="4"></button></div>
+      <div class="phl__btns">
+        <button type="button" class="icon-btn" data-phl-prev aria-label="Previous highlight"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M13 8H3M7 4L3 8l4 4"/></svg></button>
+        <button type="button" class="icon-btn" data-phl-next aria-label="Next highlight"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+      </div>
+    </div>
   </section>
 
-  <!-- 4 THE DRAWINGS. COET's original service illustrations, unchanged, as a tile grid -->
-  <section class="section bento-x" id="services" data-sc-act="flow" aria-labelledby="bento-title">
+  <!-- 4 THE SERVICES: COET's original drawings as a tile grid (user: "make the services a grid again") -->
+  <section class="section bento-x pch-wrap" id="services" data-sc-act="flow" aria-labelledby="services-title">
     <div class="wrap">
-      <div class="head-x" data-sc-in>
-        <h2 id="bento-title" class="label">Services</h2>
-        <p class="sc-display h2" data-words-in>Brand, web, interfaces and <span class="grad">engineering</span></p>
+      <div class="pch-wrap__head" data-sc-in>
+        <p class="pch__eyebrow">Services</p>
+        <h2 id="services-title" class="sc-display h2">Brand, web, interfaces and engineering.</h2>
       </div>
       <div class="bento-x__grid" data-sc-in data-sc-stagger="70">
       <article class="tile-x tile-x--branding" tabindex="0" aria-labelledby="tile-branding">
@@ -135,47 +175,20 @@
     </div>
   </section>
 
-  <!-- 6 TESTIMONIAL -->
-  <section class="voice" data-sc-act="flow" data-station="voice" aria-label="Testimonial">
-    <div class="wrap voice__grid">
-      <figure class="voice__photo" data-sc-reveal="up" data-sc-reveal-at="0.05 0.4"><img src="/coet-redesign/assets/img/jeff.avif" width="1680" height="936" alt="Jeff Ciachurski, seated, speaking into a studio microphone" loading="lazy" decoding="async"></figure>
-      <figure class="voice__quote" data-sc-in>
-        <blockquote><p><em class="slot">[TESTIMONIAL: Jeff, verbatim. Two lines at most — the band sizes for two.]</em></p></blockquote>
-        <figcaption>Jeff Ciachurski · Executive Chairman, Captiva Verde</figcaption>
-      </figure>
+  <!-- 5 AT A GLANCE: the numbers, large, from the site's own data -->
+  <section class="section pspecs" data-sc-act="flow" aria-labelledby="specs-title">
+    <div class="wrap">
+      <h2 id="specs-title" class="sc-display h2" data-sc-in>COET at a glance.</h2>
+      <ul class="counts pspecs__grid" data-sc-in data-sc-stagger="60">
+        <li><b data-count="12">0</b><span>People on the team</span></li>
+        <li><b data-count="5">0</b><span>Disciplines under one roof</span></li>
+        <li><b data-count="2">0</b><span>Studios, Milan and Scottsdale</span></li>
+        <li><b data-count="3">0</b><span>Projects open this quarter</span></li>
+      </ul>
     </div>
   </section>
 
-  <!-- 7 TEAM -->
-  <section class="section team" id="team" data-sc-act="flow" aria-labelledby="team-title">
-    <!-- COET's own globe (original team__globe: their coastlines, their two studios and their arcs), redrawn for the dark page -->
-    <div class="team__globe" data-globe aria-hidden="true"><canvas></canvas>
-      <p class="team__studio"><b data-studio-name>SCOTTSDALE</b><span data-studio-lat>33.4942°N</span><span data-studio-lng>111.9261°W</span></p></div>
-    <div class="wrap head head--split" data-sc-in>
-      <div><h2 id="team-title" class="sc-display h2" data-words-in>The people <span class="grad">behind it</span></h2><p class="lede">We take all that technical depth and turn it into something people understand and enjoy. No corporate fluff. Just the product and story you have been trying to say.</p></div>
-      <div class="team__controls">
-        <span class="team__hint">← → ↑ ↓ steer the globe</span>
-        <button type="button" class="icon-btn" data-rail-prev aria-label="Previous team members"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M13 8H3M7 4L3 8l4 4"/></svg></button>
-        <button type="button" class="icon-btn" data-rail-next aria-label="Next team members"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
-      </div>
-    </div>
-    <ul class="team__rail" data-rail tabindex="0" aria-label="Team members. Use the arrow keys to scroll." data-sc-in data-sc-stagger="50">
-      <li class="person"><figure class="person__pic"><img src="/coet-redesign/assets/img/team/ccdf94f84d.webp" width="600" height="750" alt="Jason Coawette, Founder &amp; CEO" loading="lazy" decoding="async"></figure><p class="person__name">Jason Coawette</p><p class="person__role">Founder &amp; CEO</p></li>
-      <li class="person"><figure class="person__pic"><img src="/coet-redesign/assets/img/team/36975729e6.webp" width="600" height="750" alt="Jackie Gilbert, Head of design" loading="lazy" decoding="async"></figure><p class="person__name">Jackie Gilbert</p><p class="person__role">Head of design</p></li>
-      <li class="person"><figure class="person__pic"><img src="/coet-redesign/assets/img/team/003d1294c5.webp" width="600" height="750" alt="Giorgio Bordoli, Head of engineering" loading="lazy" decoding="async"></figure><p class="person__name">Giorgio Bordoli</p><p class="person__role">Head of engineering</p></li>
-      <li class="person"><figure class="person__pic"><img src="/coet-redesign/assets/img/team/fdab99521a.webp" width="600" height="750" alt="Lucas Lauachella, Head of operations" loading="lazy" decoding="async"></figure><p class="person__name">Lucas Lauachella</p><p class="person__role">Head of operations</p></li>
-      <li class="person"><figure class="person__pic"><img src="/coet-redesign/assets/img/team/01c226b233.webp" width="600" height="750" alt="Katie Little, Product manager" loading="lazy" decoding="async"></figure><p class="person__name">Katie Little</p><p class="person__role">Product manager</p></li>
-      <li class="person"><figure class="person__pic"><img src="/coet-redesign/assets/img/team/4399730803.webp" width="600" height="750" alt="Matthew Schafman, Interface designer" loading="lazy" decoding="async"></figure><p class="person__name">Matthew Schafman</p><p class="person__role">Interface designer</p></li>
-      <li class="person"><figure class="person__pic"><img src="/coet-redesign/assets/img/team/c8e4e8d197.webp" width="600" height="750" alt="Grace Gonzalez, Interface designer" loading="lazy" decoding="async"></figure><p class="person__name">Grace Gonzalez</p><p class="person__role">Interface designer</p></li>
-      <li class="person"><figure class="person__pic"><img src="/coet-redesign/assets/img/team/25e9621bac.webp" width="600" height="750" alt="Olaf Klimasz, Motion designer" loading="lazy" decoding="async"></figure><p class="person__name">Olaf Klimasz</p><p class="person__role">Motion designer</p></li>
-      <li class="person"><figure class="person__pic"><img src="/coet-redesign/assets/img/team/a87de1edd8.webp" width="600" height="750" alt="Laish Glenberg, Software engineer" loading="lazy" decoding="async"></figure><p class="person__name">Laish Glenberg</p><p class="person__role">Software engineer</p></li>
-      <li class="person"><figure class="person__pic"><img src="/coet-redesign/assets/img/team/3b9bb91c92.webp" width="600" height="750" alt="Theo Xenakis, Software engineer" loading="lazy" decoding="async"></figure><p class="person__name">Theo Xenakis</p><p class="person__role">Software engineer</p></li>
-      <li class="person"><figure class="person__pic"><img src="/coet-redesign/assets/img/team/21d586a60b.webp" width="600" height="750" alt="Corsa DeCenzo, Hardware engineer" loading="lazy" decoding="async"></figure><p class="person__name">Corsa DeCenzo</p><p class="person__role">Hardware engineer</p></li>
-      <li class="person"><figure class="person__pic"><img src="/coet-redesign/assets/img/team/201bdec7a3.webp" width="600" height="750" alt="Gabe Luraicella, Brand &amp; creative strategist" loading="lazy" decoding="async"></figure><p class="person__name">Gabe Luraicella</p><p class="person__role">Brand &amp; creative strategist</p></li>
-    </ul>
-  </section>
-
-  <!-- 8 WORK -->
+  <!-- 6 WORK -->
   <section class="section" id="work" data-sc-act="flow" aria-labelledby="work-title">
     <div class="wrap">
       <div class="head head--split" data-sc-in>
@@ -212,6 +225,46 @@
       </article>
       </div>
     </div>
+  </section>
+
+  <!-- 7 TESTIMONIAL -->
+  <section class="voice" data-sc-act="flow" data-station="voice" aria-label="Testimonial">
+    <div class="wrap voice__grid">
+      <figure class="voice__photo" data-sc-reveal="up" data-sc-reveal-at="0.05 0.4"><img src="/coet-redesign/assets/img/jeff.avif" width="1680" height="936" alt="Jeff Ciachurski, seated, speaking into a studio microphone" loading="lazy" decoding="async"></figure>
+      <figure class="voice__quote" data-sc-in>
+        <blockquote><p><em class="slot">[TESTIMONIAL: Jeff, verbatim. Two lines at most — the band sizes for two.]</em></p></blockquote>
+        <figcaption>Jeff Ciachurski · Executive Chairman, Captiva Verde</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 8 TEAM -->
+  <section class="section team" id="team" data-sc-act="flow" aria-labelledby="team-title">
+    <!-- COET's own globe (original team__globe: their coastlines, their two studios and their arcs), redrawn for the dark page -->
+    <div class="team__globe" data-globe aria-hidden="true"><canvas></canvas>
+      <p class="team__studio"><b data-studio-name>SCOTTSDALE</b><span data-studio-lat>33.4942°N</span><span data-studio-lng>111.9261°W</span></p></div>
+    <div class="wrap head head--split" data-sc-in>
+      <div><h2 id="team-title" class="sc-display h2" data-words-in>The people <span class="grad">behind it</span></h2><p class="lede">We take all that technical depth and turn it into something people understand and enjoy. No corporate fluff. Just the product and story you have been trying to say.</p></div>
+      <div class="team__controls">
+        <span class="team__hint">← → ↑ ↓ steer the globe</span>
+        <button type="button" class="icon-btn" data-rail-prev aria-label="Previous team members"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M13 8H3M7 4L3 8l4 4"/></svg></button>
+        <button type="button" class="icon-btn" data-rail-next aria-label="Next team members"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+      </div>
+    </div>
+    <ul class="team__rail" data-rail tabindex="0" aria-label="Team members. Use the arrow keys to scroll." data-sc-in data-sc-stagger="50">
+      <li class="person"><figure class="person__pic"><img src="/coet-redesign/assets/img/team/ccdf94f84d.webp" width="600" height="750" alt="Jason Coawette, Founder &amp; CEO" loading="lazy" decoding="async"></figure><p class="person__name">Jason Coawette</p><p class="person__role">Founder &amp; CEO</p></li>
+      <li class="person"><figure class="person__pic"><img src="/coet-redesign/assets/img/team/36975729e6.webp" width="600" height="750" alt="Jackie Gilbert, Head of design" loading="lazy" decoding="async"></figure><p class="person__name">Jackie Gilbert</p><p class="person__role">Head of design</p></li>
+      <li class="person"><figure class="person__pic"><img src="/coet-redesign/assets/img/team/003d1294c5.webp" width="600" height="750" alt="Giorgio Bordoli, Head of engineering" loading="lazy" decoding="async"></figure><p class="person__name">Giorgio Bordoli</p><p class="person__role">Head of engineering</p></li>
+      <li class="person"><figure class="person__pic"><img src="/coet-redesign/assets/img/team/fdab99521a.webp" width="600" height="750" alt="Lucas Lauachella, Head of operations" loading="lazy" decoding="async"></figure><p class="person__name">Lucas Lauachella</p><p class="person__role">Head of operations</p></li>
+      <li class="person"><figure class="person__pic"><img src="/coet-redesign/assets/img/team/01c226b233.webp" width="600" height="750" alt="Katie Little, Product manager" loading="lazy" decoding="async"></figure><p class="person__name">Katie Little</p><p class="person__role">Product manager</p></li>
+      <li class="person"><figure class="person__pic"><img src="/coet-redesign/assets/img/team/4399730803.webp" width="600" height="750" alt="Matthew Schafman, Interface designer" loading="lazy" decoding="async"></figure><p class="person__name">Matthew Schafman</p><p class="person__role">Interface designer</p></li>
+      <li class="person"><figure class="person__pic"><img src="/coet-redesign/assets/img/team/c8e4e8d197.webp" width="600" height="750" alt="Grace Gonzalez, Interface designer" loading="lazy" decoding="async"></figure><p class="person__name">Grace Gonzalez</p><p class="person__role">Interface designer</p></li>
+      <li class="person"><figure class="person__pic"><img src="/coet-redesign/assets/img/team/25e9621bac.webp" width="600" height="750" alt="Olaf Klimasz, Motion designer" loading="lazy" decoding="async"></figure><p class="person__name">Olaf Klimasz</p><p class="person__role">Motion designer</p></li>
+      <li class="person"><figure class="person__pic"><img src="/coet-redesign/assets/img/team/a87de1edd8.webp" width="600" height="750" alt="Laish Glenberg, Software engineer" loading="lazy" decoding="async"></figure><p class="person__name">Laish Glenberg</p><p class="person__role">Software engineer</p></li>
+      <li class="person"><figure class="person__pic"><img src="/coet-redesign/assets/img/team/3b9bb91c92.webp" width="600" height="750" alt="Theo Xenakis, Software engineer" loading="lazy" decoding="async"></figure><p class="person__name">Theo Xenakis</p><p class="person__role">Software engineer</p></li>
+      <li class="person"><figure class="person__pic"><img src="/coet-redesign/assets/img/team/21d586a60b.webp" width="600" height="750" alt="Corsa DeCenzo, Hardware engineer" loading="lazy" decoding="async"></figure><p class="person__name">Corsa DeCenzo</p><p class="person__role">Hardware engineer</p></li>
+      <li class="person"><figure class="person__pic"><img src="/coet-redesign/assets/img/team/201bdec7a3.webp" width="600" height="750" alt="Gabe Luraicella, Brand &amp; creative strategist" loading="lazy" decoding="async"></figure><p class="person__name">Gabe Luraicella</p><p class="person__role">Brand &amp; creative strategist</p></li>
+    </ul>
   </section>
 
   <!-- 9 FAQ -->

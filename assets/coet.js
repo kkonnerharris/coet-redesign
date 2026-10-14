@@ -724,6 +724,42 @@
     addEventListener('blur', function () { dispatchEvent(new CustomEvent('coet:steer', { detail: { key: 'all', down: false } })); });
   }
 
+  /* ------------------------------------------------------ product page --
+     User 2026-10-14: the Apple product page layout. The product bar takes over from the main nav once the
+     hero has scrolled away and marks the section you are in; the highlights gallery has dots and arrows. */
+  var pnav = $('[data-pnav]');
+  if (pnav) {
+    var hero = $('.hero-reel--product'), links = $$('.pnav__links a', pnav);
+    var targets = links.map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); });
+    var paintPnav = function () {
+      document.body.classList.toggle('pnav-on', !!hero && hero.getBoundingClientRect().bottom < 70);
+      var cur = -1;
+      targets.forEach(function (t, i) { if (t && t.getBoundingClientRect().top < innerHeight * .4) cur = i; });
+      links.forEach(function (a, i) { if (i === cur) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
+    };
+    addEventListener('scroll', paintPnav, { passive: true }); paintPnav();
+  }
+  var phl = $('[data-phl]');
+  if (phl) {
+    var cards = $$('.phl__card', phl), dots = $$('[data-phl-dot]'), at = 0;
+    var go = function (i) {
+      i = Math.max(0, Math.min(cards.length - 1, i));
+      phl.scrollTo({ left: cards[i].offsetLeft - cards[0].offsetLeft, behavior: reduce ? 'auto' : 'smooth' }); sound('spin', .25);
+    };
+    var paintDots = function () {
+      var x = phl.scrollLeft, best = 0;
+      cards.forEach(function (c, i) { if (Math.abs(c.offsetLeft - cards[0].offsetLeft - x) < Math.abs(cards[best].offsetLeft - cards[0].offsetLeft - x)) best = i; });
+      at = best; dots.forEach(function (d, i) { d.setAttribute('aria-selected', String(i === at)); });
+      var prev = $('[data-phl-prev]'), next = $('[data-phl-next]');
+      if (prev) prev.disabled = at === 0; if (next) next.disabled = at === cards.length - 1;
+    };
+    dots.forEach(function (d, i) { d.addEventListener('click', function () { go(i); }); });
+    var pb = $('[data-phl-prev]'), nb = $('[data-phl-next]');
+    if (pb) pb.addEventListener('click', function () { go(at - 1); });
+    if (nb) nb.addEventListener('click', function () { go(at + 1); });
+    phl.addEventListener('scroll', paintDots, { passive: true }); paintDots();
+  }
+
   /* --------------------------------------------------------------- FAQ -- */
   $$('.faq details').forEach(function (d) { d.addEventListener('toggle', function () { sound('spin', .2); }); });
 

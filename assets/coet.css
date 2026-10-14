@@ -1273,3 +1273,95 @@ body::before, body::after { opacity: 0 !important; animation: none !important; }
    the hero line keeps its original magenta-to-cyan gradient */
 .hero-reel__copy h1 .grad, .hero-reel__copy h1 .grad .gw {
   background: linear-gradient(95deg, #ff3d9a 0%, #c77dff 50%, #2de2ff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+/* ===================================================== PRODUCT PAGE ======
+   User 2026-10-14: "this doesn't feel like a product website setup" → the Apple product page layout.
+   A product bar that takes over from the main nav once the hero has gone, a centred hero, a snapping
+   highlights gallery, one full-width chapter per service, a numbers grid. */
+html { scroll-padding-top: 64px; }
+
+/* the product bar */
+.pnav { position: fixed; z-index: 60; inset: 0 0 auto 0; height: 52px; transform: translateY(-100%); transition: transform 380ms var(--ease);
+  background: rgb(10 10 12 / .72); backdrop-filter: saturate(1.6) blur(20px); -webkit-backdrop-filter: saturate(1.6) blur(20px);
+  border-bottom: 1px solid rgb(255 255 255 / .08); }
+.pnav-on .pnav { transform: none; }
+.pnav-on .nav { transform: translateY(-110%) !important; }
+.pnav__inner { height: 100%; max-width: var(--sc-maxw); margin: 0 auto; padding-inline: var(--sc-gutter); display: flex; align-items: center; gap: 1.5rem; }
+.pnav__title { font-weight: 600; font-size: 1.2rem; letter-spacing: -.01em; color: #f5f5f7; text-decoration: none; margin-right: auto; }
+.pnav__links { display: flex; gap: 1.6rem; list-style: none; margin: 0; padding: 0; }
+.pnav__links a { font-size: 12.5px; color: #c7c7cc; text-decoration: none; transition: color 160ms; }
+.pnav__links a:hover, .pnav__links a[aria-current] { color: #fff; }
+.pnav__cta { font-size: 12.5px; font-weight: 500; color: #000; background: #f5f5f7; border-radius: 980px; padding: .38rem .9rem; text-decoration: none; white-space: nowrap; }
+.pnav__cta:hover { background: #fff; }
+@media (max-width: 739px) { .pnav__links { display: none; } }
+
+/* the hero, centred like a launch page: the line sits high, the reel plays beneath it */
+.hero-reel--product .hero-reel__shade { background: linear-gradient(180deg, rgb(0 0 0 / .72) 0%, rgb(0 0 0 / .35) 34%, transparent 55%, transparent 80%, rgb(0 0 0 / .55) 100%); }
+.film main > section.hero-reel--product > .hero-reel__copy, .hero-reel--product .hero-reel__copy {
+  top: clamp(5.5rem, 14vh, 9.5rem); bottom: auto; justify-items: center; text-align: center; gap: 1.2rem; }
+.hero-reel--product .hero-reel__eyebrow { margin: 0; font-size: clamp(1rem, .8rem + .6vw, 1.4rem); font-weight: 600; color: #f5f5f7; letter-spacing: -.01em; }
+.hero-reel--product .hero-reel__copy h1, .film .hero-reel--product .hero-reel__copy h1 {
+  font-size: clamp(2.4rem, 1rem + 4vw, 5.2rem); max-width: 16ch; line-height: 1.02; letter-spacing: -.045em; margin: 0; }
+.hero-reel--product .btn-row { justify-content: center; align-items: center; gap: 1.5rem; }
+.pl-link { color: #f5f5f7; text-decoration: none; font-size: 1.05rem; }
+.pl-link:hover { text-decoration: underline; }
+@media (max-width: 859px) {
+  .film main > section.hero-reel--product > .hero-reel__copy, .hero-reel--product .hero-reel__copy { top: 5.5rem; }
+  .hero-reel--product .hero-reel__copy h1, .film .hero-reel--product .hero-reel__copy h1 { font-size: min(10vw, 2.8rem); }
+}
+
+/* the intro: centred and big, lighting up word by word */
+.pintro .sc-display { text-align: center; margin-inline: auto; max-width: 26ch; }
+
+/* get the highlights */
+.phl { padding-block: var(--sc-section) calc(var(--sc-section) * .7); }
+.phl__head h2 { margin: 0 0 2.2rem; }
+.phl__rail { --side: max(var(--sc-gutter), calc((100vw - var(--sc-maxw)) / 2 + var(--sc-gutter)));
+  display: grid; grid-auto-flow: column; grid-auto-columns: min(84vw, 1060px); gap: 1.25rem; overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory; scroll-padding-inline: var(--side); padding: 0 var(--side) .5rem; margin: 0; list-style: none; scrollbar-width: none; }
+.phl__rail::-webkit-scrollbar { display: none; }
+.phl__card { position: relative; scroll-snap-align: start; aspect-ratio: 16 / 10; border-radius: var(--r-media); overflow: hidden; background: #0a0a0c;
+  border: 1px solid rgb(255 255 255 / .08); }
+.phl__card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(.4) brightness(.9); }
+.phl__card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgb(0 0 0 / .6), transparent 45%); }
+.phl__copy { position: absolute; z-index: 1; top: clamp(1.4rem, 3vw, 2.6rem); left: clamp(1.4rem, 3vw, 2.8rem); right: 1.4rem; }
+.phl__kicker { margin: 0 0 .4rem; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #a1a1a6; }
+.phl__line { margin: 0; max-width: 24ch; font-size: clamp(1.15rem, .8rem + 1.1vw, 1.9rem); line-height: 1.18; font-weight: 600; letter-spacing: -.02em; color: #f5f5f7; text-wrap: balance; }
+.phl__ctrl { display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin-top: 1.6rem; }
+.phl__dots { display: flex; gap: .7rem; padding: .7rem 1.1rem; border-radius: 980px; background: rgb(255 255 255 / .08); }
+.phl__dots button { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 980px; background: rgb(255 255 255 / .35); cursor: pointer; transition: width 300ms var(--ease), background 300ms; }
+.phl__dots button[aria-selected="true"] { width: 44px; background: #f5f5f7; }
+.phl__btns { display: flex; gap: .6rem; }
+@media (max-width: 859px) { .phl__card { aspect-ratio: 4 / 5; } .phl__rail { grid-auto-columns: 86vw; } }
+
+/* the service chapters */
+.pch-wrap { padding-top: var(--sc-section); }
+.pch-wrap__head { text-align: center; margin-bottom: clamp(2rem, 6vw, 4rem); }
+.pch-wrap__head h2 { margin: .4rem auto 0; max-width: 20ch; }
+.pch__eyebrow { margin: 0; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #a1a1a6; }
+.pch { padding-block: clamp(3.5rem, 9vw, 7rem); border-top: 1px solid rgb(255 255 255 / .06); }
+.pch__copy { text-align: center; display: grid; justify-items: center; gap: .9rem; margin-bottom: clamp(2rem, 5vw, 3.5rem); }
+.pch__copy h3 { margin: 0; font-size: clamp(2.8rem, 1rem + 6vw, 6.5rem); line-height: 1; letter-spacing: -.05em; font-weight: 600; color: #f5f5f7; }
+.pch__text { margin: 0; max-width: 40ch; font-size: clamp(1.05rem, .9rem + .45vw, 1.35rem); line-height: 1.45; color: #a1a1a6; text-wrap: pretty; }
+.pch__copy .tags { justify-content: center; }
+.pch__art.tile-x { grid-column: auto; width: 100%; min-height: 0; height: clamp(300px, 46vw, 620px); padding: 0; border-radius: var(--r-media);
+  border: 1px solid rgb(255 255 255 / .08); background: radial-gradient(70% 70% at 50% 45%, rgb(255 255 255 / .05), transparent 70%), #08080a; }
+.pch__art .tile-x__art { inset: 0; }
+
+/* at a glance */
+.pspecs h2 { text-align: center; margin: 0 0 clamp(2rem, 5vw, 3.5rem); }
+.pspecs__grid.counts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin: 0; padding: 0; list-style: none; border-top: 1px solid rgb(255 255 255 / .12); }
+.pspecs__grid.counts li { padding: 2rem 1.25rem 0; border-left: 1px solid rgb(255 255 255 / .08); display: grid; gap: .6rem; align-content: start; }
+.pspecs__grid.counts li:first-child { border-left: 0; padding-left: 0; }
+.pspecs__grid.counts b { font-size: clamp(3.2rem, 1.5rem + 5vw, 6.5rem); line-height: 1; letter-spacing: -.05em; font-weight: 600;
+  background: linear-gradient(180deg, #fff, #9a9aa2); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.pspecs__grid.counts span { font-size: 14px !important; letter-spacing: 0 !important; text-transform: none !important; color: #a1a1a6 !important; font-family: inherit !important; }
+@media (max-width: 859px) {
+  .pspecs__grid.counts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pspecs__grid.counts li { padding: 1.5rem 0 1.5rem 1rem; border-top: 0; }
+  .pspecs__grid.counts li:nth-child(odd) { border-left: 0; padding-left: 0; }
+  .pspecs__grid.counts li:nth-child(n+3) { border-top: 1px solid rgb(255 255 255 / .08); }
+}
+/* review: phones keep the line clear of the sound button; desktop highlight cards fit the screen with their dots */
+@media (max-width: 859px) { .film main > section.hero-reel--product > .hero-reel__copy, .hero-reel--product .hero-reel__copy { top: 8.5rem; } }
+@media (min-width: 860px) { .phl__rail { grid-auto-columns: min(78vw, 1000px); } .phl__card { aspect-ratio: 16 / 9; max-height: 64vh; } }

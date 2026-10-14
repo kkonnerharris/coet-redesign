@@ -104,10 +104,12 @@
     <div class="wrap"><p class="sc-display" data-words-in>We take all that technical depth and turn it into something people understand and enjoy. No corporate fluff. Just the product and story you have been trying to say.</p></div>
   </section>
 
-  <!-- 3 GET THE HIGHLIGHTS: a snapping gallery of the five services, from the Higgsfield stills -->
-  <section class="phl" id="highlights" data-sc-act="flow" aria-labelledby="phl-title">
+  <!-- 3 GET THE HIGHLIGHTS: the five services from the Higgsfield stills. The section pins while you scroll and
+       your scroll turns the cards past (user: "just scrolling on the cards will rotate them") -->
+  <section class="phl" id="highlights" data-phl-pin aria-labelledby="phl-title" style="--n: 5">
+   <div class="phl__stage">
     <div class="wrap phl__head"><h2 id="phl-title" class="sc-display h2">Get the highlights.</h2></div>
-    <ul class="phl__rail" data-phl tabindex="0" aria-label="Highlights. Swipe or use the buttons.">
+    <ul class="phl__rail" data-phl aria-label="Highlights. Scroll, or use the buttons.">
       <li class="phl__card" id="hl-branding" aria-label="Branding">
         <img src="/coet-redesign/assets/img/svc-branding.webp" alt="" loading="lazy" decoding="async">
         <div class="phl__copy"><p class="phl__kicker">Branding</p><p class="phl__line">Your brand should reflect the credibility of your product, and the company you&#x27;re becoming.</p></div>
@@ -136,6 +138,7 @@
         <button type="button" class="icon-btn" data-phl-next aria-label="Next highlight"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
       </div>
     </div>
+   </div>
   </section>
 
   <!-- 4 THE SERVICES: COET's original drawings as a tile grid (user: "make the services a grid again") -->

@@ -739,25 +739,40 @@
     };
     addEventListener('scroll', paintPnav, { passive: true }); paintPnav();
   }
-  var phl = $('[data-phl]');
-  if (phl) {
-    var cards = $$('.phl__card', phl), dots = $$('[data-phl-dot]'), at = 0;
-    var go = function (i) {
+  // user: "just scrolling on the cards will rotate them". The section is tall and its stage is sticky, so while it
+  // is pinned the page's own scroll drives the rail sideways; each card turns a little in 3D as it comes and goes.
+  // Wheel, trackpad, touch and keys all just scroll the page, so nothing is hijacked.
+  var phl = $('[data-phl]'), pin = $('[data-phl-pin]');
+  if (phl && pin) {
+    var cards = $$('.phl__card', phl), dots = $$('[data-phl-dot]'), at = -1;
+    var pb = $('[data-phl-prev]'), nb = $('[data-phl-next]');
+    var range = function () { return Math.max(1, pin.offsetHeight - innerHeight); };
+    var go = function (i) {   // the dots and arrows scroll the page to that card's point in the pin
       i = Math.max(0, Math.min(cards.length - 1, i));
-      phl.scrollTo({ left: cards[i].offsetLeft - cards[0].offsetLeft, behavior: reduce ? 'auto' : 'smooth' }); sound('spin', .25);
+      var top = pin.getBoundingClientRect().top + scrollY;
+      scrollTo({ top: top + range() * i / (cards.length - 1), behavior: reduce ? 'auto' : 'smooth' });
     };
-    var paintDots = function () {
-      var x = phl.scrollLeft, best = 0;
-      cards.forEach(function (c, i) { if (Math.abs(c.offsetLeft - cards[0].offsetLeft - x) < Math.abs(cards[best].offsetLeft - cards[0].offsetLeft - x)) best = i; });
-      at = best; dots.forEach(function (d, i) { d.setAttribute('aria-selected', String(i === at)); });
-      var prev = $('[data-phl-prev]'), next = $('[data-phl-next]');
-      if (prev) prev.disabled = at === 0; if (next) next.disabled = at === cards.length - 1;
+    var turn = function () {
+      var p = Math.max(0, Math.min(1, -pin.getBoundingClientRect().top / range()));
+      var span = cards[cards.length - 1].offsetLeft - cards[0].offsetLeft;
+      phl.scrollLeft = p * span;
+      var mid = innerWidth / 2;
+      if (!reduce) cards.forEach(function (c) {   // turn: cards off to the side swing away from you, the centre one faces you
+        var r = c.getBoundingClientRect(), d = Math.max(-1.4, Math.min(1.4, (r.left + r.width / 2 - mid) / r.width));
+        c.style.transform = 'rotateY(' + (-d * 16).toFixed(2) + 'deg) scale(' + (1 - Math.min(1, Math.abs(d)) * .08).toFixed(3) + ')';
+        c.style.opacity = (1 - Math.min(1, Math.abs(d)) * .45).toFixed(3);
+      });
+      var now = Math.round(p * (cards.length - 1));
+      if (now !== at) {
+        if (at !== -1) sound('spin', .18);
+        at = now; dots.forEach(function (d, i) { d.setAttribute('aria-selected', String(i === at)); });
+        if (pb) pb.disabled = at === 0; if (nb) nb.disabled = at === cards.length - 1;
+      }
     };
     dots.forEach(function (d, i) { d.addEventListener('click', function () { go(i); }); });
-    var pb = $('[data-phl-prev]'), nb = $('[data-phl-next]');
     if (pb) pb.addEventListener('click', function () { go(at - 1); });
     if (nb) nb.addEventListener('click', function () { go(at + 1); });
-    phl.addEventListener('scroll', paintDots, { passive: true }); paintDots();
+    addEventListener('scroll', turn, { passive: true }); addEventListener('resize', turn); turn();
   }
 
   /* --------------------------------------------------------------- FAQ -- */

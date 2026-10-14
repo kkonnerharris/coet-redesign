@@ -1365,3 +1365,14 @@ html { scroll-padding-top: 64px; }
 /* review: phones keep the line clear of the sound button; desktop highlight cards fit the screen with their dots */
 @media (max-width: 859px) { .film main > section.hero-reel--product > .hero-reel__copy, .hero-reel--product .hero-reel__copy { top: 8.5rem; } }
 @media (min-width: 860px) { .phl__rail { grid-auto-columns: min(78vw, 1000px); } .phl__card { aspect-ratio: 16 / 9; max-height: 64vh; } }
+/* highlights pinned: the page scroll turns the cards (user: "just scrolling on the cards will rotate them") */
+.phl { padding-block: 0; height: calc(100svh + (var(--n) - 1) * 62svh); }
+.phl__stage { position: sticky; top: 52px; height: calc(100svh - 52px); display: flex; flex-direction: column; justify-content: center; gap: 0; overflow: hidden; }
+.phl__head h2 { margin-bottom: clamp(1rem, 3vh, 2.2rem); }
+.phl__rail { overflow: hidden; scroll-snap-type: none; perspective: 1600px; padding-block: 1rem; }
+.phl__card { transform-origin: 50% 50%; will-change: transform, opacity; backface-visibility: hidden; }
+@media (min-width: 860px) { .phl__card { max-height: 58vh; } }
+@media (max-width: 859px) { .phl__card { aspect-ratio: 4 / 5; max-height: 58svh; } .phl__rail { grid-auto-columns: min(86vw, calc(58svh * .8)); } }
+/* the card you are on sits dead centre, facing you; its neighbours turn away on either side */
+.phl__rail { --cw: min(78vw, 1000px); grid-auto-columns: var(--cw); padding-inline: calc((100vw - var(--cw)) / 2); }
+@media (max-width: 859px) { .phl__rail { --cw: min(86vw, calc(58svh * .8)); } }

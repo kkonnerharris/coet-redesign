@@ -1054,3 +1054,21 @@ elevenlabs-convai {
   .film main > section.hero-reel > .hero-reel__copy { bottom: 128px; }
   elevenlabs-convai { --el-overlay-padding: 14px; }
 }
+
+/* ===================================================== STARFIELD + GELS ==
+   User 2026-10-13: "make the background like that [their Panoramic Deep-Sky Starfield] but still keep the
+   video, just have it on the accents". The user's starfield is the page, fixed behind everything; the two gel
+   lights stay over it as the accents; the landing reel is screened onto it, so its black drops away and the
+   hardware floats in the stars. Cards keep a dark glass so the type stays easy to read. */
+html { background: #000 url(/coet-redesign/assets/img/starfield.webp) center / cover fixed; }
+html, body { background-color: #000; }
+body { background: linear-gradient(rgb(0 0 0 / .32), rgb(0 0 0 / .32)) fixed; }
+.hero-reel { background: transparent; }
+.hero-reel__video { mix-blend-mode: screen; }
+.hero-reel__shade { background: linear-gradient(180deg, rgb(0 0 0 / .45), transparent 16%, transparent 70%, rgb(0 0 0 / .7) 100%), linear-gradient(90deg, rgb(0 0 0 / .5), transparent 34%); }
+.tile-x { background: radial-gradient(80% 70% at 50% 38%, rgb(255 255 255 / .05), transparent 70%), rgb(6 6 10 / .82); }
+.film .reel__frame, .film .work__media, .person__pic, .voice__photo, .faq details { background-color: rgb(5 5 8 / .85); }
+@media (max-width: 859px) { html { background-attachment: scroll; background-size: auto 100vh; background-repeat: repeat-y; } }
+/* the hero is its own stacking group, so the stars are drawn inside it too (same fixed image, lined up with the page) */
+.hero-reel { background: linear-gradient(rgb(0 0 0 / .32), rgb(0 0 0 / .32)) fixed, #000 url(/coet-redesign/assets/img/starfield.webp) center / cover fixed; }
+@media (max-width: 859px) { .hero-reel { background: linear-gradient(rgb(0 0 0 / .32), rgb(0 0 0 / .32)), #000 url(/coet-redesign/assets/img/starfield.webp) top center / auto 100vh repeat-y; } }

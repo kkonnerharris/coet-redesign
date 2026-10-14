@@ -1094,3 +1094,53 @@ body { background: linear-gradient(rgb(0 0 0 / .32), rgb(0 0 0 / .32)) fixed; }
 
 /* the landing's lower shade fades back out before its edge, so there is no band where the page begins */
 .hero-reel__shade { background: linear-gradient(180deg, rgb(0 0 0 / .45), transparent 16%, transparent 60%, rgb(0 0 0 / .5) 84%, rgb(0 0 0 / 0) 100%), linear-gradient(90deg, rgb(0 0 0 / .5), transparent 34%); }
+
+/* ==================================================== DESIGN REVIEW FIXES ==
+   A senior design pass (user: "from a world class designer point of view make some critiques and fixes"). */
+
+/* 1. one palette. The old amber accent is retired everywhere outside COET's own drawings and the copy slots:
+      the accent is the magenta gel, its text tint a light magenta, ink on it black. */
+:root { --accent: var(--gel-a); --accent-text: #ff8cc6; --accent-ink: #000; --cyan: var(--gel-b); }
+.filters button[aria-pressed="true"] { background: linear-gradient(95deg, var(--gel-a), var(--gel-b)); color: #000; border-color: transparent; }
+.brief__progress span { background: linear-gradient(90deg, var(--gel-a), var(--gel-b)); }
+.label::before, .chapter__eyebrow::before, .pill::before { background: var(--gel-a); box-shadow: 0 0 8px var(--gel-a), 0 0 18px rgb(255 61 154 / .45); }
+:focus-visible { outline-color: var(--gel-b); }
+
+/* 2. the hero leads. The line is the loudest type on the first screen, still clear of the reel's hardware. */
+@media (min-width: 860px) {
+  .hero-reel__copy h1 { font-size: clamp(2.4rem, 1rem + 2.5vw, 3.9rem); max-width: 13ch; line-height: .98; }
+  .hero-reel__copy .label { margin-bottom: .25rem; }
+}
+
+/* 3. small type you can actually read on a starfield: 12px floor for the mono labels, brighter grey */
+:root { --ink-soft: #a9a9b6; }
+.counts span, .person .person__role, .tile-x p, .tag, .team__hint, .nav__trail, .label { font-size: 12px !important; color: #b4b4c0; }
+.counts span { letter-spacing: .12em; }
+.foot__row, .foot__row a { font-size: 12.5px; color: #b4b4c0; }
+.tag { border-color: rgb(255 255 255 / .16); }
+
+/* 4. one vertical rhythm: every section breathes the same, and nothing leaves a screen of empty sky */
+:root { --sc-section: clamp(4rem, 8vw, 7.5rem); }
+.section { padding-block: var(--sc-section); }
+.team { padding-bottom: calc(var(--sc-section) * .6); }
+#work { padding-top: calc(var(--sc-section) * .6); }
+.statement-reel { padding-block: clamp(5rem, 12vw, 9rem); }
+
+/* 5. the project plates are lit like the team: a gel edge and a soft spill, alternating, so they read as objects in the
+      space, not black holes in it */
+.work__media { --gel: 255 61 154; border-color: rgb(var(--gel) / .3) !important;
+  box-shadow: 0 0 0 1px rgb(var(--gel) / .1), 0 30px 80px -34px rgb(var(--gel) / .5), 0 0 120px -50px rgb(var(--gel) / .45) !important;
+  transition: box-shadow 500ms var(--ease), border-color 500ms var(--ease), transform 500ms var(--ease); }
+.work:nth-child(even) .work__media, .card:nth-child(even) .work__media { --gel: 45 226 255; }
+.work:hover .work__media, .card:hover .work__media { border-color: rgb(var(--gel) / .65) !important; transform: translateY(-4px);
+  box-shadow: 0 0 0 1px rgb(var(--gel) / .3), 0 36px 90px -30px rgb(var(--gel) / .7), 0 0 150px -40px rgb(var(--gel) / .6) !important; }
+
+/* 6. the form's main button says what it does */
+.brief [data-next] { gap: .6rem; font-weight: 600; letter-spacing: -0.01em; }
+.brief [data-next] svg { width: 16px; height: 16px; }
+
+/* 7. phones: the page ends clear of the compact voice agent */
+@media (max-width: 859px) { .close--studio { padding-bottom: 6rem; } }
+/* review, second look: the line sets in three or four lines, and the close is a finale, not a screen of empty sky */
+@media (min-width: 860px) { .hero-reel__copy h1 { max-width: 17ch; font-size: clamp(2.3rem, 1rem + 2.3vw, 3.6rem); } }
+.close--studio .close__inner { min-height: min(68svh, 680px); padding-block: clamp(3rem, 8vw, 6rem) clamp(2rem, 5vw, 4rem); }

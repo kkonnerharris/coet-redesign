@@ -765,7 +765,7 @@
       btnBack.hidden = idx === 0;
       var last = idx === L.length - 1;
       btnNext.setAttribute('aria-label', last ? 'Submit enquiry' : 'Next step');
-      btnNext.innerHTML = last ? 'Submit enquiry' : '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>';
+      btnNext.innerHTML = last ? 'Submit enquiry' : 'Continue <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>';
       bar.style.setProperty('--fill', ((idx + 1) / L.length).toFixed(3));
       bar.setAttribute('aria-valuenow', String(idx + 1)); bar.setAttribute('aria-valuemax', String(L.length));
       err.textContent = '';
@@ -802,3 +802,9 @@
     restore(); render(false);
   }
 })();
+
+/* the voice agent: a compact pill on phones, so it never sits on top of section titles or the closing CTA */
+document.addEventListener('DOMContentLoaded', function () {
+  var va = document.querySelector('elevenlabs-convai');
+  if (va && matchMedia('(max-width: 859px)').matches) va.setAttribute('variant', 'compact');
+});

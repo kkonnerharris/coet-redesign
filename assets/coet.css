@@ -1144,3 +1144,16 @@ body { background: linear-gradient(rgb(0 0 0 / .32), rgb(0 0 0 / .32)) fixed; }
 /* review, second look: the line sets in three or four lines, and the close is a finale, not a screen of empty sky */
 @media (min-width: 860px) { .hero-reel__copy h1 { max-width: 17ch; font-size: clamp(2.3rem, 1rem + 2.3vw, 3.6rem); } }
 .close--studio .close__inner { min-height: min(68svh, 680px); padding-block: clamp(3rem, 8vw, 6rem) clamp(2rem, 5vw, 4rem); }
+
+/* the glow, everywhere and visible at rest (user: "where's the glow"): the service tiles get their own gel,
+   alternating like the team and the plates, and every glow is lifted so it reads on a phone with no hover */
+.tile-x { --gel: 255 61 154;
+  box-shadow: inset 0 -90px 110px -70px rgb(var(--gel) / .42), inset 0 1px 0 rgb(var(--gel) / .35), 0 0 90px -50px rgb(var(--gel) / .5);
+  transition: box-shadow 500ms var(--ease); }
+.tile-x:nth-child(even) { --gel: 45 226 255; }
+.tile-x h3 { text-shadow: 0 0 24px rgb(var(--gel) / .45); }
+.tile-x:hover, .tile-x.is-on { box-shadow: inset 0 -110px 130px -70px rgb(var(--gel) / .6), inset 0 1px 0 rgb(var(--gel) / .6), 0 0 110px -40px rgb(var(--gel) / .6); }
+
+.person__pic { box-shadow: 0 0 0 1px rgb(var(--gel) / .2), 0 24px 64px -18px rgb(var(--gel) / .75), 0 0 140px -40px rgb(var(--gel) / .65); border-color: rgb(var(--gel) / .5); }
+.person__pic::after { background: linear-gradient(0deg, rgb(var(--gel) / .38), transparent 46%); }
+.work__media { box-shadow: 0 0 0 1px rgb(var(--gel) / .18), 0 34px 90px -30px rgb(var(--gel) / .7), 0 0 160px -50px rgb(var(--gel) / .6) !important; border-color: rgb(var(--gel) / .45) !important; }

@@ -52,7 +52,7 @@
     if (armed || reduce) return; armed = true;
     var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
     actx = new AC();
-    master = actx.createBiquadFilter(); master.type = 'lowpass'; master.frequency.value = 1900; master.Q.value = .4;   // mellow: round off every bright edge
+    master = actx.createBiquadFilter(); master.type = 'lowpass'; master.frequency.value = 1300; master.Q.value = .4;   // mellow: round off every bright edge
     var mg = actx.createGain(); mg.gain.value = .75; master.connect(mg).connect(actx.destination);
     ['spin', 'enter', 'frame'].forEach(function (n) {
       fetch('/coet-redesign/assets/sfx/' + n + '.wav').then(function (r) { return r.arrayBuffer(); })
@@ -65,7 +65,7 @@
     if (!soundOn || !actx || !buffers[name]) return;
     if (actx.state === 'suspended') actx.resume();
     var src = actx.createBufferSource(), g = actx.createGain();
-    src.buffer = buffers[name]; src.playbackRate.value = .86; g.gain.value = (gain == null ? .5 : gain) * .55;
+    src.buffer = buffers[name]; src.playbackRate.value = .7; g.gain.value = (gain == null ? .5 : gain) * .55;
     src.connect(g).connect(master); src.start();
   }
   $$('[data-sound-toggle]').forEach(function (b) {
@@ -105,14 +105,14 @@
   }
   function bed() {   // the continuous layers exist only once audio is armed and sound is on
     if (!actx || !soundOn || air) { if (air && !soundOn) { air.g.gain.setTargetAtTime(0, actx.currentTime, .05); water.g.gain.setTargetAtTime(0, actx.currentTime, .1); } return; }
-    air = loopNoise(320, .5); water = loopNoise(620, .8); air.f.type = 'lowpass'; water.f.type = 'lowpass';
+    air = loopNoise(220, .5); water = loopNoise(420, .8); air.f.type = 'lowpass'; water.f.type = 'lowpass';
   }
-  var NOTES = [220, 261.63, 293.66, 329.63, 392, 440];   // A minor pentatonic: any two notes sit well together
+  var NOTES = [110, 130.81, 146.83, 164.81, 196, 220];   // A minor pentatonic, an octave down (user: "change sound to a lower tone")
   function chime(gain) {   // a soft bell: two sines, slow bloom, long tail
     if (!soundOn || !actx) return;
     var t = actx.currentTime, f = NOTES[Math.floor(Math.random() * NOTES.length)], g = actx.createGain();
     g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + .03); g.gain.exponentialRampToValueAtTime(.0001, t + 1.6);
-    [[f, 1], [f * 2, .25]].forEach(function (h) { var o = actx.createOscillator(), og = actx.createGain(); o.type = 'sine'; o.frequency.value = h[0]; og.gain.value = h[1];
+    [[f, 1], [f * 2, .4]].forEach(function (h) { var o = actx.createOscillator(), og = actx.createGain(); o.type = 'sine'; o.frequency.value = h[0]; og.gain.value = h[1];
       o.connect(og).connect(g); o.start(t); o.stop(t + 1.7); });
     g.connect(master);
   }
@@ -141,7 +141,7 @@
       requestAnimationFrame(airLoop);
       if (!air || !soundOn) return;
       air.g.gain.setTargetAtTime(vel * .05, actx.currentTime, .35);
-      air.f.frequency.setTargetAtTime(260 + vel * 420, actx.currentTime, .4);
+      air.f.frequency.setTargetAtTime(180 + vel * 300, actx.currentTime, .4);
       vel *= .94;
       waterLevel = 0;
       waterEls.forEach(function (el) {   // how much of the Tap Water plate is on screen
@@ -153,8 +153,8 @@
     (function bubble() {   // bubbling in the trickle, and now and then a single clear drip
       setTimeout(bubble, 220 + Math.random() * 700);
       if (!actx || !soundOn || waterLevel < .05 || document.hidden) return;
-      drop(.016 * waterLevel, 700);
-      if (Math.random() < .07) drop(.06 * waterLevel, 330);
+      drop(.016 * waterLevel, 460);
+      if (Math.random() < .07) drop(.06 * waterLevel, 220);
     })();
     document.addEventListener('visibilitychange', function () { if (actx) (document.hidden ? actx.suspend() : actx.resume()); });
     ['click', 'touchend'].forEach(function (e) { addEventListener(e, function () { if (actx && actx.state === 'suspended' && !document.hidden) actx.resume(); }, { passive: true }); });

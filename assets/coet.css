@@ -1076,3 +1076,21 @@ body { background: linear-gradient(rgb(0 0 0 / .32), rgb(0 0 0 / .32)) fixed; }
    Where the cut-out can't play (Safari), the opaque reel shows on its own black. */
 .hero-reel__video { mix-blend-mode: normal; }
 .hero-reel__video:not(.is-cutout) { background: #000; }
+
+/* the team, lit like the rest of the page (user: "for the team part you forgot the glow"):
+   each portrait sits in one of the two gels, alternating, with the light catching its lower edge */
+.person__pic { position: relative; --gel: 255 61 154; border-color: rgb(var(--gel) / .35);
+  box-shadow: 0 0 0 1px rgb(var(--gel) / .12), 0 22px 60px -22px rgb(var(--gel) / .55), 0 0 90px -40px rgb(var(--gel) / .45);
+  transition: box-shadow 500ms var(--ease), border-color 500ms var(--ease), transform 500ms var(--ease); }
+.person:nth-child(even) .person__pic { --gel: 45 226 255; }
+.person__pic::after { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+  background: linear-gradient(0deg, rgb(var(--gel) / .28), transparent 42%); mix-blend-mode: screen; transition: opacity 500ms var(--ease); }
+@media (hover: hover) and (pointer: fine) {
+  .person:hover .person__pic, .person:focus-within .person__pic { border-color: rgb(var(--gel) / .7); transform: translateY(-4px);
+    box-shadow: 0 0 0 1px rgb(var(--gel) / .3), 0 28px 70px -20px rgb(var(--gel) / .75), 0 0 120px -30px rgb(var(--gel) / .6); }
+  .person:hover .person__pic::after { opacity: .6; }
+}
+.team .h2 .grad, #team-title .grad { display: inline; }
+
+/* the landing's lower shade fades back out before its edge, so there is no band where the page begins */
+.hero-reel__shade { background: linear-gradient(180deg, rgb(0 0 0 / .45), transparent 16%, transparent 60%, rgb(0 0 0 / .5) 84%, rgb(0 0 0 / 0) 100%), linear-gradient(90deg, rgb(0 0 0 / .5), transparent 34%); }

@@ -1190,3 +1190,16 @@ body { background: linear-gradient(rgb(0 0 0 / .32), rgb(0 0 0 / .32)) fixed; }
   .team__globe { right: auto; left: 50%; top: 0; translate: -50% 4%; width: 100vw; opacity: .95; }
 }
 @media (min-width: 860px) { .team__globe { translate: 0 -9%; } }
+
+/* ======================================================== SKY 2 ==========
+   User 2026-10-13: "I just downloaded a new image for you to switch the background with that" (17538.jpg, a
+   purple Milky Way over a hill line). One fixed layer behind every page, so the horizon always sits at the foot
+   of the screen. The reel is a true cut-out now, so the landing shows this same sky through it, no second copy. */
+html { background: #000; }
+body { background: transparent; }
+.bg-sky { position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(180deg, rgb(0 0 0 / .42), rgb(0 0 0 / .28) 55%, rgb(0 0 0 / .5)), #07040f url(/coet-redesign/assets/img/sky.webp) center 60% / cover no-repeat; }
+.hero-reel, .hero-reel:is(*) { background: transparent !important; }
+@media (max-width: 859px) {
+  .bg-sky { height: 100lvh; bottom: auto; background-image: linear-gradient(180deg, rgb(0 0 0 / .42), rgb(0 0 0 / .28) 55%, rgb(0 0 0 / .5)), url(/coet-redesign/assets/img/sky-m.webp); background-position: center bottom; }
+}

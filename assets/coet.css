@@ -1157,3 +1157,36 @@ body { background: linear-gradient(rgb(0 0 0 / .32), rgb(0 0 0 / .32)) fixed; }
 .person__pic { box-shadow: 0 0 0 1px rgb(var(--gel) / .2), 0 24px 64px -18px rgb(var(--gel) / .75), 0 0 140px -40px rgb(var(--gel) / .65); border-color: rgb(var(--gel) / .5); }
 .person__pic::after { background: linear-gradient(0deg, rgb(var(--gel) / .38), transparent 46%); }
 .work__media { box-shadow: 0 0 0 1px rgb(var(--gel) / .18), 0 34px 90px -30px rgb(var(--gel) / .7), 0 0 160px -50px rgb(var(--gel) / .6) !important; border-color: rgb(var(--gel) / .45) !important; }
+
+/* services: no enhanced highlight (user: "remove the enhance highlighting in the services tab").
+   The tiles keep their resting gel glow; the cursor spotlight and the brighter hover / in-view state are gone. */
+.tile-x::after { display: none !important; }
+.tile-x:hover, .tile-x.is-on, .tile-x:focus-visible {
+  background: radial-gradient(80% 70% at 50% 38%, rgb(255 255 255 / .05), transparent 70%), rgb(6 6 10 / .82);
+  box-shadow: inset 0 -90px 110px -70px rgb(var(--gel) / .42), inset 0 1px 0 rgb(var(--gel) / .35), 0 0 90px -50px rgb(var(--gel) / .5); }
+.tile-x:focus-visible { outline: 2px solid var(--gel-b); outline-offset: -2px; }
+
+/* COET's team globe (globe.js), where the original keeps it: large, behind the cards, bleeding off the left edge */
+.team { overflow-x: clip; }
+.team > .wrap, .team__rail { position: relative; z-index: 1; }
+.team__globe { position: absolute; z-index: 0; pointer-events: none; left: max(-16vw, -240px); top: 52%; translate: 0 -50%;
+  width: min(1080px, 80vw); aspect-ratio: 1; }
+.team__globe canvas { width: 100%; height: 100%; display: block; }
+.team__studio { position: absolute; left: 0; top: 0; margin: 0; display: grid; gap: 3px; text-align: right; white-space: nowrap;
+  font: 500 11px/1.2 var(--sc-font-mono); letter-spacing: .12em; color: #c3c3d0; text-shadow: 0 2px 12px #000; will-change: transform; }
+.team__studio b { color: #fff; font-weight: 600; letter-spacing: .16em; }
+@media (max-width: 859px) {
+  .team__globe { width: 150vw; left: -55vw; top: 30%; opacity: .8; }
+}
+/* the globe sits in the open sky right of the headline, its lower edge passing behind the top of the cards */
+.team__globe { left: auto; right: max(-10vw, -180px); top: 0; translate: 0 -14%; width: min(860px, 60vw); }
+@media (max-width: 859px) {
+  .team__globe { right: -42vw; left: auto; top: 0; translate: 0 -22%; width: 118vw; opacity: .75; }
+  .team__studio { font-size: 10px; }
+}
+.team__globe { translate: 0 -2%; }
+@media (max-width: 859px) {   /* phones: the globe gets its own band above the headline */
+  .team { padding-top: calc(var(--sc-section) * .5 + 78vw); }
+  .team__globe { right: auto; left: 50%; top: 0; translate: -50% 4%; width: 100vw; opacity: .95; }
+}
+@media (min-width: 860px) { .team__globe { translate: 0 -9%; } }

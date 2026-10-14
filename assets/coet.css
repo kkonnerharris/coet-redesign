@@ -1203,3 +1203,12 @@ body { background: transparent; }
 @media (max-width: 859px) {
   .bg-sky { height: 100lvh; bottom: auto; background-image: linear-gradient(180deg, rgb(0 0 0 / .42), rgb(0 0 0 / .28) 55%, rgb(0 0 0 / .5)), url(/coet-redesign/assets/img/sky-m.webp); background-position: center bottom; }
 }
+
+/* ======================================================== SKY 3 ==========
+   User 2026-10-13: "try my most recently downloaded pic as the background" (a Pexels Milky Way, magenta and red
+   on deep black). Same single fixed layer; sky.webp (17538.jpg) stays built so it can come straight back.
+   No horizon in this one, so it is centred, and the band of the galaxy keeps to the right behind the copy. */
+.bg-sky { background-image: linear-gradient(180deg, rgb(0 0 0 / .38), rgb(0 0 0 / .22) 55%, rgb(0 0 0 / .45)), url(/coet-redesign/assets/img/sky3.webp); background-position: center; }
+@media (max-width: 859px) {
+  .bg-sky { background-image: linear-gradient(180deg, rgb(0 0 0 / .38), rgb(0 0 0 / .22) 55%, rgb(0 0 0 / .45)), url(/coet-redesign/assets/img/sky3-m.webp); background-position: center; }
+}

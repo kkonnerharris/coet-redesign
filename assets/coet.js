@@ -673,15 +673,27 @@
     function edges() { prev.disabled = rail.scrollLeft < 4; next.disabled = rail.scrollLeft > rail.scrollWidth - rail.clientWidth - 4; }
     prev.addEventListener('click', function () { move(-1); });
     next.addEventListener('click', function () { move(1); });
+    [[prev, 'ArrowLeft'], [next, 'ArrowRight']].forEach(function (b) {   // holding an on-screen arrow keeps the globe turning
+      var steer = function (down) { dispatchEvent(new CustomEvent('coet:steer', { detail: { key: b[1], down: down } })); };
+      b[0].addEventListener('pointerdown', function () { steer(true); });
+      ['pointerup', 'pointerleave', 'pointercancel'].forEach(function (t) { b[0].addEventListener(t, function () { steer(false); }); });
+    });
     rail.addEventListener('scroll', edges, { passive: true }); addEventListener('resize', edges); edges();
     var teamVisible = false;
     new IntersectionObserver(function (es) { teamVisible = es[0].isIntersecting; }, { threshold: .35 }).observe(rail.closest('section'));
     addEventListener('keydown', function (e) {
       if (!teamVisible || menuOpen || e.altKey || e.metaKey || e.ctrlKey) return;
       if (/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) return;
+      if (!/^Arrow/.test(e.key)) return;
+      // user: "make the globe controllable by the arrows": all four arrows steer it while held (globe.js);
+      // up/down only take the key while the globe can still tilt, after that the page scrolls as usual
+      dispatchEvent(new CustomEvent('coet:steer', { detail: { key: e.key, down: true, event: e } }));
+      if (e.repeat) { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') e.preventDefault(); return; }   // holding turns the globe, not the rail
       if (e.key === 'ArrowRight') { e.preventDefault(); move(1); }
       if (e.key === 'ArrowLeft') { e.preventDefault(); move(-1); }
     });
+    addEventListener('keyup', function (e) { if (/^Arrow/.test(e.key)) dispatchEvent(new CustomEvent('coet:steer', { detail: { key: e.key, down: false } })); });
+    addEventListener('blur', function () { dispatchEvent(new CustomEvent('coet:steer', { detail: { key: 'all', down: false } })); });
   }
 
   /* --------------------------------------------------------------- FAQ -- */

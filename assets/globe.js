@@ -2,8 +2,8 @@
    The original site has a globe behind the team (team__globe): their coastlines, their two studios, Milan and
    Scottsdale, joined by a trunk arc, and arcs from each studio to the cities they work with. This redraws that
    exact data for the dark page: coastlines in faint starlight, arcs in the two gels with light travelling along
-   them, a pulsing studio marker with its coordinates, and the globe turning between the two studios.
-   A plain 2D canvas, no three.js. It only animates on screen, and it is still under reduced motion. */
+   them, a pulsing studio marker with its coordinates, and the globe spinning steadily (the arrows steer it).
+   A plain 2D canvas, no three.js. It only animates on screen. The spin runs even under reduced motion (user: "spin continuously without stopping"). */
 (function () {
   'use strict';
   var host = document.querySelector('[data-globe]'); if (!host) return;
@@ -21,7 +21,6 @@
   var ARCS = [{ a: STUDIOS.Milan, b: STUDIOS.Scottsdale, trunk: true }];
   ROUTES.forEach(function (r) { r.to.forEach(function (c) { ARCS.push({ a: STUDIOS[r.from], b: { lat: c[1], lng: c[2] }, from: r.from }); }); });
   ARCS.forEach(function (arc, i) { arc.seed = (i * 0.618) % 1; });
-  var ORDER = ['Scottsdale', 'Milan'];
 
   var D = Math.PI / 180, coast = null, w = 0, h = 0, R = 0, cx = 0, cy = 0, dpr = 1;
   var view = { lng: STUDIOS.Scottsdale.lng, lat: STUDIOS.Scottsdale.lat * .6 }, from = null, to = null, swapAt = 0, active = 'Scottsdale';
@@ -113,9 +112,8 @@
     latEl.textContent = Math.abs(s.lat).toFixed(4) + '°' + (s.lat >= 0 ? 'N' : 'S');
     lngEl.textContent = Math.abs(s.lng).toFixed(4) + '°' + (s.lng >= 0 ? 'E' : 'W');
   }
-  function ease(k) { return k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; }
 
-  var visible = false, last = 0, turn = null, spin = 0, holdUntil = 0;
+  var visible = false, last = 0, spin = 0, dir = 1, BASE = 1;   // BASE: ~33° a second, one turn every ~11 s (user: "make it rotate faster")
   function nearest() {   // the studio closest to the front of the globe becomes the labelled one
     var best = active, bz = -2;
     Object.keys(STUDIOS).forEach(function (n) { var z = rot(vec(STUDIOS[n].lat, STUDIOS[n].lng))[2]; if (z > bz) { bz = z; best = n; } });
@@ -124,37 +122,47 @@
   // user: "the arrow keys should also spin the globe" (the team rail's arrows send coet:spin from coet.js)
   addEventListener('coet:spin', function (e) {
     var d = e.detail > 0 ? 1 : -1;
-    turn = null; holdUntil = performance.now() + 12000; swapAt = performance.now();
-    if (reduce) { view.lng += d * 30; nearest(); draw(0); return; }
+    swapAt = performance.now();
+    if (d !== dir) { dir = d; spin = 0; }   // the arrows choose the direction; it never passes through a standstill
     spin = Math.max(-6, Math.min(6, spin + d * 2.4));   // each press adds ~35° of travel; presses stack
   });
+  // user: "make the globe controllable by the arrows": hold ← → to turn it, ↑ ↓ to tilt it (keys come from coet.js)
+  var held = { ArrowLeft: 0, ArrowRight: 0, ArrowUp: 0, ArrowDown: 0 }, tilt = 0, TILT = 62;
+  addEventListener('coet:steer', function (e) {
+    var k = e.detail.key;
+    if (k === 'all') { for (var n in held) held[n] = 0; return; }
+    if (!(k in held)) return;
+    if (!e.detail.down) { held[k] = 0; return; }
+    if (k === 'ArrowUp' || k === 'ArrowDown') {   // only take the key while there is tilt left, then the page scrolls
+      if ((k === 'ArrowUp' ? 1 : -1) * view.lat >= TILT - .5) { held[k] = 0; return; }
+      e.detail.event.preventDefault();
+    }
+    held[k] = 1;
+  });
+  function steer() {   // held keys build up the turn and the tilt; let go and both ease out
+    var sx = held.ArrowRight - held.ArrowLeft, sy = held.ArrowUp - held.ArrowDown;
+    if (sx) { if (sx !== dir) { dir = sx; spin = 0; } spin += (sx * 2.2 - spin) * .12; }
+    tilt = sy ? tilt + (sy * 1.6 - tilt) * .18 : tilt * .86;
+    if (Math.abs(tilt) < .02) tilt = 0;
+    if (tilt) view.lat = Math.max(-TILT, Math.min(TILT, view.lat + tilt));
+  }
   function frame(now) {
     if (!visible) return;
     requestAnimationFrame(frame);
     if (now - last < 30) return; last = now;
     if (!swapAt) swapAt = now;
-    if (turn) {   // a slow turn from one studio to the other
-      var k = Math.min(1, (now - turn.t0) / 2600), e = ease(k), dl = ((turn.to.lng - turn.from.lng + 540) % 360) - 180;
-      view.lng = turn.from.lng + dl * e; view.lat = turn.from.lat + (turn.to.lat - turn.from.lat) * e;
-      if (k >= 1) { turn = null; swapAt = now; }
-    } else if (spin) {   // the team arrows spun it: momentum that eases out, the label follows whichever studio faces us
-      view.lng += spin; spin *= .93;
-      if (Math.abs(spin) < .03) spin = 0;
-      nearest();
-    } else {
-      view.lng += .012;   // a breath of drift
-      if (now - swapAt > 9000 && now > holdUntil) {
-        var next = ORDER[(ORDER.indexOf(active) + 1) % ORDER.length];
-        turn = { t0: now, from: { lng: view.lng, lat: view.lat }, to: { lng: STUDIOS[next].lng, lat: STUDIOS[next].lat * .6 } };
-        setStudio(next);
-      }
-    }
+    steer();
+    // user: "the globe should be constantly spinning": it always turns east at an even pace; the arrows add to
+    // that or flip its direction, and their extra momentum eases back out into the steady spin
+    view.lng += dir * BASE + spin; spin *= .93;
+    if (Math.abs(spin) < .03) spin = 0;
+    nearest();
     draw(now);
   }
-  fetch('/coet-redesign/assets/globe/coast.json').then(function (r) { return r.json(); }).then(function (d) { coast = d; if (reduce || !visible) draw(0); }).catch(function () {});
+  fetch('/coet-redesign/assets/globe/coast.json').then(function (r) { return r.json(); }).then(function (d) { coast = d; if (!visible) draw(0); }).catch(function () {});
   size(); setStudio('Scottsdale'); draw(0);
   addEventListener('resize', function () { size(); draw(performance.now()); });
-  if (!reduce) new IntersectionObserver(function (es) {
+  new IntersectionObserver(function (es) {
     var was = visible; visible = es[0].isIntersecting;
     if (visible && !was) requestAnimationFrame(frame);
   }, { rootMargin: '100px 0px' }).observe(host);

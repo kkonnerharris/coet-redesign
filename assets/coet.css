@@ -1072,3 +1072,7 @@ body { background: linear-gradient(rgb(0 0 0 / .32), rgb(0 0 0 / .32)) fixed; }
 /* the hero is its own stacking group, so the stars are drawn inside it too (same fixed image, lined up with the page) */
 .hero-reel { background: linear-gradient(rgb(0 0 0 / .32), rgb(0 0 0 / .32)) fixed, #000 url(/coet-redesign/assets/img/starfield.webp) center / cover fixed; }
 @media (max-width: 859px) { .hero-reel { background: linear-gradient(rgb(0 0 0 / .32), rgb(0 0 0 / .32)), #000 url(/coet-redesign/assets/img/starfield.webp) top center / auto 100vh repeat-y; } }
+/* the reel is cut out of its black (alpha_reel.py), so the stars stay behind the hardware: no blend.
+   Where the cut-out can't play (Safari), the opaque reel shows on its own black. */
+.hero-reel__video { mix-blend-mode: normal; }
+.hero-reel__video:not(.is-cutout) { background: #000; }

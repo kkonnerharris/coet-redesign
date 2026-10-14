@@ -440,11 +440,18 @@
   });
   // showreel: fetched when near, playing only while on screen, never under reduced motion
   $$('[data-reel]').forEach(function (v) {
-    if (matchMedia('(max-width: 859px)').matches && v.getAttribute('data-src-m')) {   // phones get the portrait cut
+    var phone = matchMedia('(max-width: 859px)').matches;
+    if (phone && v.getAttribute('data-src-m')) {   // phones get the portrait cut
       v.setAttribute('data-src', v.getAttribute('data-src-m'));
       if (v.getAttribute('data-poster-m')) v.poster = v.getAttribute('data-poster-m');
     }
-    if (reduce) return;
+    // the cut-out reel (VP9 with alpha) keeps the stars behind the hardware; Safari can't show WebM alpha, so it keeps the opaque cut
+    var safari = /^((?!chrome|chromium|crios|fxios|android|edg).)*safari/i.test(navigator.userAgent);
+    var alphaSrc = v.getAttribute(phone ? 'data-src-m-a' : 'data-src-a');
+    if (reduce) return;   // reduced motion keeps the still poster
+    if (alphaSrc && !safari && v.canPlayType('video/webm; codecs="vp9"')) {
+      v.setAttribute('data-src', alphaSrc); v.removeAttribute('poster'); v.classList.add('is-cutout');
+    }
     new IntersectionObserver(function (es) {
       if (es[0].isIntersecting) {
         if (!v.getAttribute('src')) v.src = v.getAttribute('data-src');
